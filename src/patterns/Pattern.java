@@ -35,16 +35,19 @@ public class Pattern {
         List<PatternElem> def = new ArrayList<PatternElem>();
         String token, arguments;
         int braceL, braceR;
+        PatternLabel patternLabel;
         String patternName;
         
         StringTokenizer stringTokenizer = new StringTokenizer(p);
         while (stringTokenizer.hasMoreTokens()) {
-            patternName = "-";
-            arguments = "=";
+            patternName = "";
+            arguments = "";
             token = stringTokenizer.nextToken();
             braceL = token.indexOf("(");
             if (braceL != -1) {
                 patternName = token.substring(0, braceL);
+                patternLabel = PatternLabel.valueOf(patternName);
+                System.out.println("Label: " + patternLabel);
                 braceR = token.indexOf(")");
                 if(braceR != -1) arguments = token.substring((braceL + 1), braceR);
                 else System.out.println("Pattern Fucntion needs a \")\"");
