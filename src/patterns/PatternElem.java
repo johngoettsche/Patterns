@@ -86,7 +86,7 @@ public abstract class PatternElem {
                 PatternElem pat = nullElem;
                 argumentName = token.substring(0, braceL);
                 //check for user defined function or enum
-                if()
+                //if()
                 patternLabel = PatternLabel.valueOf(argumentName);
                 braceR = token.lastIndexOf(")");
                 if(braceR != -1) argument = token.substring((braceL + 1), braceR);
