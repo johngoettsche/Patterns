@@ -16,6 +16,7 @@ public class testing {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Pattern testPat = new Pattern("Len(func(i)) | 'a'");
+        Pattern testPat = new Pattern("Len(5)");
+        System.out.println(testPat.match("abcdefg"));
     }
 }

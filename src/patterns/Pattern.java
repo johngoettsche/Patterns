@@ -79,20 +79,75 @@ public class Pattern {
                 } else { //existing patterns or operators
                     if(token.contentEquals("|")){
                         pat = new PatternOperatorAlternate();
-                    }
-                        
+                    }  
                 }
             }
-            System.out.println("-----------------");
-            System.out.println(pat.getElementName());
-            System.out.println(pat.getArguments().size() + " args, Pattern");
-            if(pat.getArguments().size() > 0){
-                for(int i = 0; i < pat.getArguments().size(); i++){
-                    System.out.println("\t" + pat.getArgument(i));
-                }
-            }
-            System.out.println("=================");
+            printPatternElements(pat);
+            def.add(pat);
         }
+        PatternElem endElem = new PatternElemEnd();
+        def.add(endElem);
+        System.out.println("definition size: " + def.size());
         return def;
+    }
+    
+    public String match(String subject){
+        int pos = 0;
+        int oldPos = 0;
+        String matchString = "";
+        MatchResult matchResult = new MatchResult(pos, matchString);
+        matchResult.setSuccess(false);
+        MatchResult internalResult = new MatchResult(pos, matchString);
+        internalResult.setSuccess(false);
+        int patEl = 0;
+        while (!matchResult.isSuccess() && !definition.get(patEl).getClass().equals(PatternElemEnd.class)){
+            oldPos = pos;
+            while(!internalResult.isSuccess() && pos <= subject.length()) {
+                internalResult = definition.get(patEl).evaluate(subject, pos);
+                if(internalResult.isSuccess()){
+                    pos = internalResult.getPos();
+                    matchString = internalResult.getSubString();
+                } else {
+                    pos++;
+                }
+            }
+            if(internalResult.isSuccess()){
+                matchResult.setSubString(matchResult.getSubString() + internalResult.getSubString());
+                matchResult.setPos(internalResult.getPos());
+                patEl++;
+                if(definition.get(patEl).getClass().equals(PatternElemEnd.class)){
+                    matchResult.setSuccess(true);
+                }
+            } else {
+                pos = oldPos;
+                patEl = 0;
+            }
+            
+        }
+        String result = matchResult.getSubString();
+        return result;
+    }
+    
+    private void printPatternElements(PatternElem pat){
+        System.out.println("-----------------");
+        System.out.println(pat.getElementName());
+        System.out.println(pat.getArguments().size() + " args, Pattern");
+        if(pat.getArguments().size() > 0){
+            for(int i = 0; i < pat.getArguments().size(); i++){
+                if(pat.getArgument(i).getClass().equals(PatternFunctionLen.class)||
+                        pat.getArgument(i).getClass().equals(PatternElemNull.class)
+                        ){ //pattern function
+                    System.out.println("\t1 - " + pat.getArgument(i).getElementName());
+                } else if(pat.getArgument(i).getClass().equals(PatternTypeInteger.class) ||
+                        pat.getArgument(i).getClass().equals(PatternTypeString.class) ||
+                        pat.getArgument(i).getClass().equals(PatternTypeCSet.class)
+                        ){ //pattern primitive type
+                    System.out.println("\t2 - " + pat.getArgument(i).getCharSet());
+                } else { //pattern other
+                    System.out.println("\t3 - " + pat.getArgument(i).toString());
+                }
+            }
+        }
+        System.out.println("=================");
     }
 }

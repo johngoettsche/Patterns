@@ -18,8 +18,8 @@ public class PatternElemNull extends PatternElem{
         setElementName("Pattern Element Null");
     }
 
-    public MatchResult evaluate(){
-        MatchResult result = new MatchResult(0, "");
-        return result;
+    public MatchResult evaluate(String subject, int pos){
+        MatchResult matchResult = new MatchResult(0, "");
+        return matchResult;
     }
 }

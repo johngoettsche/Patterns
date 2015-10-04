@@ -14,11 +14,13 @@ public class InternalMatch {
     private String subject;
     private int pos;
     private Pattern pattern;
+    private int value;
     
-    public InternalMatch(String s, int p, Pattern pat){
+    public InternalMatch(String s, int p, Pattern pat, int v){
         subject = s;
         pos = p;
         pattern = pat;
+        value = v;
     }
 
     public String getSubject() {
@@ -32,6 +34,9 @@ public class InternalMatch {
     public Pattern getPattern() {
         return pattern;
     }
-    
-    
+
+    public int getValue() {
+        return value;
+    }
+      
 }

@@ -21,7 +21,7 @@ public class PatternTypeString extends PatternType{
         setElementName("Pattern Type String " + st);
     }
     
-    public MatchResult evaluate(){
+    public MatchResult evaluate(String subject, int pos){
         MatchResult result = new MatchResult();
         result.setPos(0);
         result.setSubString("");

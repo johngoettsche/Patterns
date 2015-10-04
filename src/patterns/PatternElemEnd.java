@@ -7,18 +7,15 @@ package patterns;
 
 /**
  *
- * @author John H. Goettsche
+ * @author John
  */
-public class PatternFunctionUser extends PatternFunction{
-    public PatternFunctionUser(){
+public class PatternElemEnd extends PatternElem {
+    public PatternElemEnd(){
         
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult result = new MatchResult();
-        result.setPos(0);
-        result.setSubString("");
-        
-        return result;
-    }
+        MatchResult matchResult = new MatchResult(0, "");
+        return matchResult;
+    }    
 }

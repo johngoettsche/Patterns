@@ -10,9 +10,8 @@ import java.util.List;
 
 /**
  *
- * @author John
+ * @author John H. Goettsche
  */
-public abstract class PatternType extends PatternElem{
+public abstract class PatternType extends PatternElem {
 
-    
 }

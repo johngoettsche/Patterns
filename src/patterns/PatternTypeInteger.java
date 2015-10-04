@@ -5,25 +5,24 @@
  */
 package patterns;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
- * @author John
+ * @author John H. Goettsche
+ *  public MatchResult(int p, String s){
  */
-public class PatternTypeCSet extends PatternType{
-    public PatternTypeCSet(String st) {
+public class PatternTypeInteger extends PatternType{
+    public PatternTypeInteger(String st) {
         setCharSet(st);
-        setArguments(defineFuncArguments(st));
-        setElementName("Pattern Type C-Set " + st);
+        setElementName("Pattern Type Integer " + st);  
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult result = new MatchResult();
-        result.setPos(0);
+        MatchResult result = new MatchResult(pos, getCharSet());
+        result.setPos(pos);
         result.setSubString("");
-        
+        result.setIntValue(Integer.parseInt(getCharSet()));
         return result;
     }
 }

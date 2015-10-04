@@ -12,6 +12,9 @@ package patterns;
 public class MatchResult {
     private int pos;
     private String subString;
+    private int intValue;
+    private String stringValue;
+    private boolean success;
 
     public MatchResult(){
         
@@ -30,11 +33,35 @@ public class MatchResult {
         this.subString = subString;
     }
 
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public void setIntValue(int intValue) {
+        this.intValue = intValue;
+    }
+
+    public void setStringValue(String stringValue) {
+        this.stringValue = stringValue;
+    }
+    
     public int getPos() {
         return pos;
     }
 
     public String getSubString() {
         return subString;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public int getIntValue() {
+        return intValue;
+    }
+
+    public String getStringValue() {
+        return stringValue;
     }
 }

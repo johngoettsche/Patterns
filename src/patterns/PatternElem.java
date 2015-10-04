@@ -18,10 +18,10 @@ import java.util.StringTokenizer;
 public abstract class PatternElem {
     private PatternType element;
     private String elementName;
-    private List arguments;    
+    private List<PatternElem> arguments;    
     private String charSet;
     
-    public abstract MatchResult evaluate();
+    public abstract MatchResult evaluate(String subject, int pos);
     
     public PatternElem(){
         
@@ -63,13 +63,13 @@ public abstract class PatternElem {
         return arguments;
     }
     
-    public String getArgument(int i){
-        return arguments.get(i).toString();  
+    public PatternElem getArgument(int i){
+        return arguments.get(i);  
     }
     
     public List<PatternElem> defineFuncArguments(String args){
         PatternElem nullElem = new PatternElemNull();
-        List funcArgs = new ArrayList();
+        List<PatternElem> funcArgs = new ArrayList();
         int braceL, braceR;
         PatternLabel patternLabel;
         
@@ -78,24 +78,23 @@ public abstract class PatternElem {
             // need to handle (exp exp) make recursive
             
             String argumentName = "";
-            String argument = "";
+            String internalArgument = "";
             
             String token = stringTokenizer.nextToken();
             braceL = token.indexOf("(");
             if (braceL != -1) {//is a fuction
                 PatternElem pat = nullElem;
                 argumentName = token.substring(0, braceL);
+                System.out.println("\t- " + argumentName);
                 //check for user defined function or enum
-                //if()
                 patternLabel = PatternLabel.valueOf(argumentName);
                 braceR = token.lastIndexOf(")");
-                if(braceR != -1) argument = token.substring((braceL + 1), braceR);
+                if(braceR != -1) internalArgument = token.substring((braceL + 1), braceR);
                 //need to check for existing user defined fuctions too
-                
                 else System.out.println("Pattern Fucntion needs a \")\"");
                 switch(patternLabel){
                     case Len :
-                        pat = new PatternFunctionLen(argument);
+                        pat = new PatternFunctionLen(internalArgument);
                         break;
                     default :
                         System.out.println("Unknown Pattern Element.");
@@ -103,32 +102,13 @@ public abstract class PatternElem {
                 funcArgs.add(pat);
             } else { // not a function
                 argumentName = token;
-                
-                
-                /*if(token.startsWith("'")){ // is a String
-                    if(token.endsWith("'")){
-                        String st = token.substring(1, (token.length() - 1));
-                        System.out.println(" - " + st);
-                        arguments.add(st);
-                    } else {
-                        System.out.println("String Pattern Type must end with \"'\"");
-                    }
-                } else if(token.startsWith("`")){ //is a C-Set
-                    if(token.endsWith("`")){
-                        String st = token.substring(1, (token.length() - 1));
-                        System.out.println(" - " + st);
-                        arguments.add(st);
-                    } else {
-                        System.out.println("C-Set Pattern Type must end with \"`\"");
-                    }
-                } else */ 
-                if(isInteger(token)) { //integer
-                    argumentName = token;
-                    int value = Integer.parseInt(token);
-                    funcArgs.add(value);
+
+                if(isInteger(argumentName)) { //integer  Need to add String and CSet
+                    PatternElem integerArgument = new PatternTypeInteger(argumentName);
+                    funcArgs.add(integerArgument);
                 } else {//existing patterns or operators
-                    System.out.println("token: " + token);
-                    funcArgs.add(token);
+                    System.out.println("token: " + argumentName);
+                    funcArgs.add(nullElem);
                 }
             }
         }
@@ -141,10 +121,5 @@ public abstract class PatternElem {
             } else {
                 return false;
             }
-    }
-    
-    private boolean isPatternFunction(String st){
-        
-        return false;
     }
 }
