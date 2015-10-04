@@ -32,30 +32,66 @@ public class Pattern {
     }
     
     private List<PatternElem> patternDefinition(String p){
+        PatternElem nullElem = new PatternElemNull();
         List<PatternElem> def = new ArrayList<PatternElem>();
-        String token, arguments;
         int braceL, braceR;
         PatternLabel patternLabel;
-        String patternName;
         
         StringTokenizer stringTokenizer = new StringTokenizer(p);
         while (stringTokenizer.hasMoreTokens()) {
-            patternName = "";
-            arguments = "";
-            token = stringTokenizer.nextToken();
+            // need to handle (exp exp) make recursive
+            //need to check for existing user defined fuctions too
+            
+            String patternName = "";
+            String arguments = "";
+            PatternElem pat = nullElem;
+            String token = stringTokenizer.nextToken();
             braceL = token.indexOf("(");
             if (braceL != -1) {
                 patternName = token.substring(0, braceL);
                 patternLabel = PatternLabel.valueOf(patternName);
-                System.out.println("Label: " + patternLabel);
-                braceR = token.indexOf(")");
+                braceR = token.lastIndexOf(")");
                 if(braceR != -1) arguments = token.substring((braceL + 1), braceR);
                 else System.out.println("Pattern Fucntion needs a \")\"");
+                switch(patternLabel){
+                    case Len :
+                        pat = new PatternFunctionLen(arguments);
+                        break;
+                    default :
+                        System.out.println("Unknown Pattern Element.");
+                }
             } else {
                 patternName = token;
+                if(token.startsWith("'")){
+                    if(token.endsWith("'")){
+                        String st = token.substring(1, (token.length() - 1));
+                        pat = new PatternTypeString(st);
+                    } else {
+                        System.out.println("String Pattern Type must end with \"'\"");
+                    }
+                } else if(token.startsWith("`")){
+                    if(token.endsWith("`")){
+                        String st = token.substring(1, (token.length() - 1));
+                        pat = new PatternTypeCSet(st);
+                    } else {
+                        System.out.println("C-Set Pattern Type must end with \"`\"");
+                    }
+                } else { //existing patterns or operators
+                    if(token.contentEquals("|")){
+                        pat = new PatternOperatorAlternate();
+                    }
+                        
+                }
             }
-            System.out.println(patternName);
-            System.out.println(arguments);
+            System.out.println("-----------------");
+            System.out.println(pat.getElementName());
+            System.out.println(pat.getArguments().size() + " args, Pattern");
+            if(pat.getArguments().size() > 0){
+                for(int i = 0; i < pat.getArguments().size(); i++){
+                    System.out.println("\t" + pat.getArgument(i));
+                }
+            }
+            System.out.println("=================");
         }
         return def;
     }
