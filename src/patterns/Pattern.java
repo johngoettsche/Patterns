@@ -54,27 +54,42 @@ public class Pattern {
                 if(braceR != -1) arguments = token.substring((braceL + 1), braceR);
                 else System.out.println("Pattern Fucntion needs a \")\"");
                 switch(patternLabel){
+                    case Any :
+                        pat = new PatternFunctionAny(arguments);
+                        break;
+                    case Break :
+                        pat = new PatternFunctionBreak(arguments);
+                        break;
                     case Len :
                         pat = new PatternFunctionLen(arguments);
                         break;
+                    case NotAny :
+                        pat = new PatternFunctionNotAny(arguments);
+                        break;
+                    case Rem :
+                        pat = new PatternFunctionRem(arguments);
+                        break;
+                    case RTab :
+                        pat = new PatternFunctionRTab(arguments);
+                        break;
+                    case Span :
+                        pat = new PatternFunctionSpan(arguments);
+                        break;
+                    case Tab :
+                        pat = new PatternFunctionTab(arguments);
+                        break;
                     default :
                         System.out.println("Unknown Pattern Element.");
+                        break;
                 }
             } else {
                 patternName = token;
                 if(token.startsWith("'")){
                     if(token.endsWith("'")){
                         String st = token.substring(1, (token.length() - 1));
-                        pat = new PatternTypeString(st);
+                        pat = new PatternElemString(st);
                     } else {
                         System.out.println("String Pattern Type must end with \"'\"");
-                    }
-                } else if(token.startsWith("`")){
-                    if(token.endsWith("`")){
-                        String st = token.substring(1, (token.length() - 1));
-                        pat = new PatternTypeCSet(st);
-                    } else {
-                        System.out.println("C-Set Pattern Type must end with \"`\"");
                     }
                 } else { //existing patterns or operators
                     if(token.contentEquals("|")){
@@ -87,7 +102,6 @@ public class Pattern {
         }
         PatternElem endElem = new PatternElemEnd();
         def.add(endElem);
-        System.out.println("definition size: " + def.size());
         return def;
     }
     
@@ -120,7 +134,7 @@ public class Pattern {
                 }
             } else {
                 pos = oldPos;
-                patEl = 0;
+                //patEl--;
             }
             
         }
