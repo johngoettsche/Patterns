@@ -8,7 +8,7 @@ package patterns;
 
 /**
  *
- * @author John 
+ * @author John H. Goettsche
  */
 public class testing {
 
@@ -16,7 +16,7 @@ public class testing {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Pattern testPat = new Pattern("Len(5)");
+        Pattern testPat = new Pattern("Rem()");
         System.out.println(testPat.match("abcdefg"));
     }
 }

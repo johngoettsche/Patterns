@@ -6,24 +6,22 @@
 package patterns;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
  * @author John
  */
-public class PatternTypeCSet extends PatternType{
-    public PatternTypeCSet(String st) {
-        setCharSet(st);
+public class PatternOperatorConcat extends PatternOperator {
+    public PatternOperatorConcat(){
         setArguments(new ArrayList());
-        setElementName("Pattern Type C-Set " + st);
+        setElementName("Pattern Operator Concat");
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult result = new MatchResult(pos, getCharSet());
-        result.setPos(pos);
+        MatchResult result = new MatchResult();
+        result.setPos(0);
         result.setSubString("");
-        result.setStringValue(getCharSet());
+        
         return result;
     }
 }

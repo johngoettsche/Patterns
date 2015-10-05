@@ -5,6 +5,7 @@
  */
 package patterns;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +16,7 @@ import java.util.List;
 public class PatternTypeInteger extends PatternType{
     public PatternTypeInteger(String st) {
         setCharSet(st);
+        setArguments(new ArrayList());
         setElementName("Pattern Type Integer " + st);  
     }
     

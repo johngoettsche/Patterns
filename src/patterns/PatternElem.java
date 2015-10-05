@@ -86,8 +86,9 @@ public abstract class PatternElem {
                 PatternElem pat = nullElem;
                 argumentName = token.substring(0, braceL);
                 System.out.println("\t- " + argumentName);
-                //check for user defined function or enum
+                //check for user defined function
                 patternLabel = PatternLabel.valueOf(argumentName);
+                System.out.println(patternLabel);
                 braceR = token.lastIndexOf(")");
                 if(braceR != -1) internalArgument = token.substring((braceL + 1), braceR);
                 //need to check for existing user defined fuctions too
@@ -96,16 +97,36 @@ public abstract class PatternElem {
                     case Len :
                         pat = new PatternFunctionLen(internalArgument);
                         break;
+                    case Span :
+                        pat = new PatternFunctionSpan(internalArgument);
+                        break;
                     default :
                         System.out.println("Unknown Pattern Element.");
+                        break;
                 }
                 funcArgs.add(pat);
             } else { // not a function
                 argumentName = token;
 
-                if(isInteger(argumentName)) { //integer  Need to add String and CSet
+                if(isInteger(argumentName)) { //integer argument
                     PatternElem integerArgument = new PatternTypeInteger(argumentName);
                     funcArgs.add(integerArgument);
+                } else if(argumentName.startsWith("'")) { //string argument
+                    if(argumentName.endsWith("'")){
+                        String st = token.substring(1, (token.length() - 1));
+                        PatternElem stringArgument = new PatternTypeString(st);
+                        funcArgs.add(stringArgument);
+                    } else {
+                        System.out.println("String Pattern Type must end with \"'\"");
+                    }
+                } else if(argumentName.startsWith("`")) { //C-Set argument
+                    if(argumentName.endsWith("`")){
+                        String st = token.substring(1, (token.length() - 1));
+                        PatternElem csetArgument = new PatternTypeCSet(st);
+                        funcArgs.add(csetArgument);
+                    } else {
+                        System.out.println("String Pattern Type must end with \"'\"");
+                    }
                 } else {//existing patterns or operators
                     System.out.println("token: " + argumentName);
                     funcArgs.add(nullElem);
@@ -121,5 +142,36 @@ public abstract class PatternElem {
             } else {
                 return false;
             }
+    }
+    
+    public int beginCSet(String subject, int pos, String cset){
+        int p = pos;
+        while(p < subject.length()) {
+            for(int i = 0; i < cset.length(); i++) {
+                if(subject.charAt(p) == cset.charAt(i)) return p;
+            }
+            p++;
+        }
+        return -1;
+    }
+    
+    public boolean atCSet(String subject, int pos, String cset){
+        for(int i = pos; i < cset.length(); i++) {
+            if(subject.charAt(pos) == cset.charAt(i)) return true;
+        }
+        return false;
+    }
+    
+    public int endCSet(String subject, int pos, String cset){
+        int p = pos;
+        while(p < subject.length()) {
+            boolean success = false;
+            for(int i = 0; i < cset.length(); i++) {
+                if(subject.charAt(p) == cset.charAt(i)) success = true;
+            }
+            if(!success)return p;
+            p++;
+        }
+        return subject.length() + 1;
     }
 }

@@ -17,15 +17,15 @@ public class PatternTypeString extends PatternType{
     
     public PatternTypeString(String st) {
         setCharSet(st);
-        setArguments(defineFuncArguments(st));
+        setArguments(new ArrayList());
         setElementName("Pattern Type String " + st);
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult result = new MatchResult();
-        result.setPos(0);
+        MatchResult result = new MatchResult(pos, getCharSet());
+        result.setPos(pos);
         result.setSubString("");
-        
+        result.setStringValue(getCharSet());
         return result;
     }
 

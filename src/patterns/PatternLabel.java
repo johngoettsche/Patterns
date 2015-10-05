@@ -11,8 +11,14 @@ package patterns;
  * @author John H. Goettsche
  */
 public enum PatternLabel {
-    Concat,
-    Altern,
-    Strings,
-    Len
+    Any,
+    Break,
+    Len,
+    NotAny,
+    Pos,
+    Rem,
+    RPos,
+    RTab,
+    Span,
+    Tab
 }
