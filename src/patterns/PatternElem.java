@@ -191,4 +191,8 @@ public abstract class PatternElem {
         }
         return subject.length() + 1;
     }
+    
+    public  resolveArguments(List<PatternElem> arguments){
+    
+    }
 }

@@ -11,8 +11,8 @@ import java.util.ArrayList;
  *
  * @author John H. Goettsche
  */
-public class PatternFunctionSuccess extends PatternFunction {
-    public PatternFunctionSuccess(String args){
+public class PatternFunctionSucceed extends PatternFunction {
+    public PatternFunctionSucceed(String args){
         setArguments(new ArrayList());
         setElementName("Pattern Function Success()");
     }

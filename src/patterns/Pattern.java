@@ -87,7 +87,7 @@ public class Pattern {
                             pat = new PatternFunctionSpan(arguments);
                             break;
                         case Success :
-                            pat = new PatternFunctionSuccess(arguments);
+                            pat = new PatternFunctionSucceed(arguments);
                             break;
                         case Tab :
                             pat = new PatternFunctionTab(arguments);

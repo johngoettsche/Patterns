@@ -26,7 +26,9 @@ public class PatternFunctionLen extends PatternFunction{
         int length = 0;
         if(getArgument(0).getClass().equals(PatternTypeInteger.class)){
             length = getArgument(0).evaluate(subject, pos).getIntValue();
-        } else if(getArgument(0).equals(PatternLabel.Len)) {
+        } else {
+            PatternElem argElem = (PatternElem)resolveArguments(getArguments());
+            length = argElem.
             // evaluate internal function
         } else {
             System.out.println("argument must reduce to an integer.");
