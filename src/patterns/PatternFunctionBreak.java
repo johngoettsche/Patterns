@@ -7,9 +7,9 @@ package patterns;
 
 /**
  *
- * @author John
+ * @author John H. Goettsche
  */
-public class PatternFunctionBreak extends PatternFunction{
+public class PatternFunctionBreak extends PatternFunction {
     public PatternFunctionBreak(String args){
         setArguments(defineFuncArguments(args));
         setElementName("Pattern Function Break()");

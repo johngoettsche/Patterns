@@ -11,8 +11,13 @@ package patterns;
  * @author John H. Goettsche
  */
 public enum PatternLabel {
+    Abort,
     Any,
+    Arb,
+    Arbno,
     Break,
+    Fail,
+    Fence,
     Len,
     NotAny,
     Pos,
@@ -20,5 +25,6 @@ public enum PatternLabel {
     RPos,
     RTab,
     Span,
+    Success,
     Tab
 }

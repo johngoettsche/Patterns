@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-
 /**
  *
  * @author John H. Goettsche
@@ -47,40 +46,56 @@ public class Pattern {
             PatternElem pat = nullElem;
             String token = stringTokenizer.nextToken();
             braceL = token.indexOf("(");
-            if (braceL != -1) {
+            if (braceL != -1) {//a pattern or a pattern function
                 patternName = token.substring(0, braceL);
                 patternLabel = PatternLabel.valueOf(patternName);
                 braceR = token.lastIndexOf(")");
                 if(braceR != -1) arguments = token.substring((braceL + 1), braceR);
                 else System.out.println("Pattern Fucntion needs a \")\"");
-                switch(patternLabel){
-                    case Any :
-                        pat = new PatternFunctionAny(arguments);
-                        break;
-                    case Break :
-                        pat = new PatternFunctionBreak(arguments);
-                        break;
-                    case Len :
-                        pat = new PatternFunctionLen(arguments);
-                        break;
-                    case NotAny :
-                        pat = new PatternFunctionNotAny(arguments);
-                        break;
-                    case Rem :
-                        pat = new PatternFunctionRem(arguments);
-                        break;
-                    case RTab :
-                        pat = new PatternFunctionRTab(arguments);
-                        break;
-                    case Span :
-                        pat = new PatternFunctionSpan(arguments);
-                        break;
-                    case Tab :
-                        pat = new PatternFunctionTab(arguments);
-                        break;
-                    default :
-                        System.out.println("Unknown Pattern Element.");
-                        break;
+                if(patternName.isEmpty()) { //a pattern
+                    pat = new PatternElemPattern(arguments);
+                } else {//a pattern function
+                    switch(patternLabel){
+                        case Abort :
+                            pat = new PatternStructureAbort(arguments);
+                            break;
+                        case Any :
+                            pat = new PatternFunctionAny(arguments);
+                            break;
+                        case Arb :
+                            pat = new PatternStructureArb(definition, definition.size(), arguments);
+                            break;
+                        case Break :
+                            pat = new PatternFunctionBreak(arguments);
+                            break;
+                        case Fail :
+                            pat = new PatternFunctionFail(arguments);
+                            break;
+                        case Len :
+                            pat = new PatternFunctionLen(arguments);
+                            break;
+                        case NotAny :
+                            pat = new PatternFunctionNotAny(arguments);
+                            break;
+                        case Rem :
+                            pat = new PatternFunctionRem(arguments);
+                            break;
+                        case RTab :
+                            pat = new PatternFunctionRTab(arguments);
+                            break;
+                        case Span :
+                            pat = new PatternFunctionSpan(arguments);
+                            break;
+                        case Success :
+                            pat = new PatternFunctionSuccess(arguments);
+                            break;
+                        case Tab :
+                            pat = new PatternFunctionTab(arguments);
+                            break;
+                        default :
+                            System.out.println("Unknown Pattern Element.");
+                            break;
+                    } //end pattern function
                 }
             } else {
                 patternName = token;
@@ -94,7 +109,9 @@ public class Pattern {
                 } else { //existing patterns or operators
                     if(token.contentEquals("|")){
                         pat = new PatternOperatorAlternate();
-                    }  
+                    } else if(token.contentEquals("+")){
+                        pat = new PatternOperatorConcat();
+                    }
                 }
             }
             printPatternElements(pat);
@@ -107,39 +124,109 @@ public class Pattern {
     
     public String match(String subject){
         int pos = 0;
-        int oldPos = 0;
+        String result = "";
+        try {
+            result = patternMatch(subject, pos).getSubString();
+        } catch (PatternException ex){
+            System.out.println(ex);
+        }
+        return result;
+    }
+    
+    public MatchResult match(String subject, int pos){
+        MatchResult result = new MatchResult();
+        try {
+            result = patternMatch(subject, pos);
+        } catch (PatternException ex){
+            System.out.println(ex);
+        }
+        return result;
+    }
+    
+    private MatchResult patternMatch(String subject, int pos) throws PatternException {
+        int oldPos = pos;
         String matchString = "";
         MatchResult matchResult = new MatchResult(pos, matchString);
         matchResult.setSuccess(false);
         MatchResult internalResult = new MatchResult(pos, matchString);
         internalResult.setSuccess(false);
-        int patEl = 0;
-        while (!matchResult.isSuccess() && !definition.get(patEl).getClass().equals(PatternElemEnd.class)){
-            oldPos = pos;
-            while(!internalResult.isSuccess() && pos <= subject.length()) {
-                internalResult = definition.get(patEl).evaluate(subject, pos);
-                if(internalResult.isSuccess()){
+        MatchResult backResult = new MatchResult(pos, matchString);
+        backResult.setSuccess(true);
+        int patElem;
+        int patBack = 0;
+        while(!matchResult.isSuccess() && pos <= subject.length()) { // no match and chars left
+            patElem = patBack;
+            //matchString = "";
+            System.out.println("pos: " + pos + " - " + matchString);
+            while(!matchResult.isSuccess() && !definition.get(patElem).getClass().equals(PatternElemEnd.class)) {
+                System.out.println("\t" + definition.get(patElem).getElementName());
+                //not last pattern element
+                //needs adjusted for operators possibly try MatchResult and reduce PatternElem variables
+                definition.get(patElem).setOldPos(pos);
+                definition.get(patElem).setSubString(matchString);
+                //
+                if(!definition.get(patElem).getClass().equals(PatternOperatorAlternate.class)) { //not Alternate 
+                    if(patElem > 0) {// not first element
+                        //System.out.println(definition.get(patElem - 1).getElementName());
+                        if (definition.get(patElem - 1).getClass().getSuperclass().equals(PatternElem.class) || 
+                                definition.get(patElem - 1).getClass().getSuperclass().equals(PatternFunction.class)){
+                            //proceded by function, pattern, string
+                            if(definition.get(patElem).getClass().getSuperclass().equals(PatternOperator.class)) {
+                                //is an operator
+                                definition.get(patElem).setSubString(matchString);
+                                System.out.println("\t\t" + subject.substring(pos));
+                                internalResult = definition.get(patElem).evaluate(subject, pos);
+                            } else { // not an operator
+                                throw new PatternException("Pattern Element or Pattern Function must be followed by a Pattern Operator.");
+                            }
+                        } else {//proceded by an operator
+                            System.out.println("\t\t" + subject.substring(pos));
+                            internalResult = definition.get(patElem).evaluate(subject, pos);
+                        }
+                    } else { //first element
+                        System.out.println("\t\t" + subject.substring(pos));
+                        internalResult = definition.get(patElem).evaluate(subject, pos);
+                    }
+                } else { //alternation.
+                    matchString = "";
+                    patElem++;
+                    continue;
+                } // end alternation
+                
+                patElem++;
+                if(internalResult.isSuccess()) {
+                    patBack = patElem;
+                    matchString += internalResult.getSubString();
                     pos = internalResult.getPos();
-                    matchString = internalResult.getSubString();
-                } else {
-                    pos++;
+                } else if(!internalResult.isSuccess()) {
+                    if(internalResult.getPos() == -1){
+                        break;
+                    }
+                    patElem = findOperatorAlternate(patElem);
+                    continue;
                 }
+            } //end checking patterns 
+ 
+            if(internalResult.isSuccess()){//successful internal match
+                matchResult.setSubString(matchString);
+                matchResult.setPos(internalResult.getPos());  
+                matchResult.setSuccess(true);
+                pos = matchResult.getPos();
+                continue;
             }
-            if(internalResult.isSuccess()){
-                matchResult.setSubString(matchResult.getSubString() + internalResult.getSubString());
-                matchResult.setPos(internalResult.getPos());
-                patEl++;
-                if(definition.get(patEl).getClass().equals(PatternElemEnd.class)){
-                    matchResult.setSuccess(true);
-                }
-            } else {
-                pos = oldPos;
-                //patEl--;
-            }
-            
+            pos++;
         }
-        String result = matchResult.getSubString();
-        return result;
+         return matchResult;
+    }
+    
+    private int findOperatorAlternate(int patElem){
+        while(!definition.get(patElem).getClass().equals(PatternElemEnd.class)){
+        //for(int p = patElem; patElem < definition.size(); p++){
+            System.out.println("finding Alternate: " + definition.get(patElem).getElementName());
+            if(definition.get(patElem).getClass().equals(PatternOperatorAlternate.class))return patElem;
+            patElem++;
+        }
+        return patElem;
     }
     
     private void printPatternElements(PatternElem pat){
@@ -151,14 +238,14 @@ public class Pattern {
                 if(pat.getArgument(i).getClass().equals(PatternFunctionLen.class)||
                         pat.getArgument(i).getClass().equals(PatternElemNull.class)
                         ){ //pattern function
-                    System.out.println("\t1 - " + pat.getArgument(i).getElementName());
+                    System.out.println("\t" + pat.getArgument(i).getElementName());
                 } else if(pat.getArgument(i).getClass().equals(PatternTypeInteger.class) ||
                         pat.getArgument(i).getClass().equals(PatternTypeString.class) ||
                         pat.getArgument(i).getClass().equals(PatternTypeCSet.class)
                         ){ //pattern primitive type
-                    System.out.println("\t2 - " + pat.getArgument(i).getCharSet());
+                    System.out.println("\t" + pat.getArgument(i).getCharSet());
                 } else { //pattern other
-                    System.out.println("\t3 - " + pat.getArgument(i).toString());
+                    System.out.println("\t" + pat.getArgument(i).toString());
                 }
             }
         }

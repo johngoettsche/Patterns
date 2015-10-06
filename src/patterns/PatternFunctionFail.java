@@ -9,19 +9,19 @@ import java.util.ArrayList;
 
 /**
  *
- * @author John
+ * @author John H. Goettsche
  */
-public class PatternOperatorConcat extends PatternOperator {
-    public PatternOperatorConcat(){
+public class PatternFunctionFail extends PatternFunction {
+    public PatternFunctionFail(String args){
         setArguments(new ArrayList());
-        setElementName("Pattern Operator Concat");
+        setElementName("Pattern Function Fail()");
     }
     
     public MatchResult evaluate(String subject, int pos){
         MatchResult result = new MatchResult();
-        result.setPos(pos);
+        result.setSuccess(false);
         result.setSubString("");
-        result.setSuccess(true);
+        result.setPos(pos);
         return result;
     }
 }

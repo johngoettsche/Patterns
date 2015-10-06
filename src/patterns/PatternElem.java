@@ -20,6 +20,8 @@ public abstract class PatternElem {
     private String elementName;
     private List<PatternElem> arguments;    
     private String charSet;
+    private int oldPos;
+    private String subString;
     
     public abstract MatchResult evaluate(String subject, int pos);
     
@@ -46,6 +48,14 @@ public abstract class PatternElem {
     public void setCharSet(String charSet) {
         this.charSet = charSet;
     }
+
+    public void setOldPos(int oldPos) {
+        this.oldPos = oldPos;
+    }
+
+    public void setSubString(String subString) {
+        this.subString = subString;
+    }
     
     public PatternType getElement() {
         return element;
@@ -66,6 +76,14 @@ public abstract class PatternElem {
     public PatternElem getArgument(int i){
         return arguments.get(i);  
     }
+
+    public int getOldPos() {
+        return oldPos;
+    }
+
+    public String getSubString() {
+        return subString;
+    }
     
     public List<PatternElem> defineFuncArguments(String args){
         PatternElem nullElem = new PatternElemNull();
@@ -85,24 +103,27 @@ public abstract class PatternElem {
             if (braceL != -1) {//is a fuction
                 PatternElem pat = nullElem;
                 argumentName = token.substring(0, braceL);
-                System.out.println("\t- " + argumentName);
                 //check for user defined function
                 patternLabel = PatternLabel.valueOf(argumentName);
-                System.out.println(patternLabel);
                 braceR = token.lastIndexOf(")");
                 if(braceR != -1) internalArgument = token.substring((braceL + 1), braceR);
                 //need to check for existing user defined fuctions too
                 else System.out.println("Pattern Fucntion needs a \")\"");
-                switch(patternLabel){
-                    case Len :
-                        pat = new PatternFunctionLen(internalArgument);
-                        break;
-                    case Span :
-                        pat = new PatternFunctionSpan(internalArgument);
-                        break;
-                    default :
-                        System.out.println("Unknown Pattern Element.");
-                        break;
+                if(argumentName.isEmpty()) {
+                    pat = new PatternElemPattern(internalArgument);
+                } else {
+                    switch(patternLabel){
+                        //will copy all the cases later...
+                        case Len :
+                            pat = new PatternFunctionLen(internalArgument);
+                            break;
+                        case Span :
+                            pat = new PatternFunctionSpan(internalArgument);
+                            break;
+                        default :
+                            System.out.println("Unknown Pattern Element.");
+                            break;
+                    }
                 }
                 funcArgs.add(pat);
             } else { // not a function
@@ -128,7 +149,6 @@ public abstract class PatternElem {
                         System.out.println("String Pattern Type must end with \"'\"");
                     }
                 } else {//existing patterns or operators
-                    System.out.println("token: " + argumentName);
                     funcArgs.add(nullElem);
                 }
             }
@@ -145,13 +165,10 @@ public abstract class PatternElem {
     }
     
     public int beginCSet(String subject, int pos, String cset){
-        int p = pos;
-        while(p < subject.length()) {
-            for(int i = 0; i < cset.length(); i++) {
-                if(subject.charAt(p) == cset.charAt(i)) return p;
-            }
-            p++;
+        for(int i = 0; i < cset.length(); i++) {
+            if(subject.charAt(pos) == cset.charAt(i)) return pos;
         }
+        pos++;
         return -1;
     }
     

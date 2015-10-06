@@ -3,20 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package patterns;
 
 /**
  *
  * @author John H. Goettsche
  */
-public class testing {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        Pattern testPat = new Pattern("'cde' + 'f'");
-        System.out.println(testPat.match("abcdefg"));
+public class PatternException extends Exception{
+    public PatternException(String mesg){
+        super(mesg);
     }
 }

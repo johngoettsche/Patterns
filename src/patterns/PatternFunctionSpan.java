@@ -9,7 +9,7 @@ package patterns;
  *
  * @author John H. Goettsche
  */
-public class PatternFunctionSpan extends PatternFunction{
+public class PatternFunctionSpan extends PatternFunction {
     public PatternFunctionSpan(String args){
         setArguments(defineFuncArguments(args));
         setElementName("Pattern Function Span()");

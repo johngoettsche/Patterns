@@ -20,7 +20,8 @@ public class PatternElemString extends PatternElem {
     
     public MatchResult evaluate(String subject, int pos) {
         MatchResult result = new MatchResult();
-        if(subject.contains(getCharSet())){
+        String subString = subject.substring(pos);
+        if(subString.startsWith(getCharSet())) {
             int start = subject.indexOf(getCharSet());
             int stop = start + getCharSet().length();
             result.setSubString(getCharSet());
