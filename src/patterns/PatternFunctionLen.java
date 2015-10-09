@@ -27,10 +27,10 @@ public class PatternFunctionLen extends PatternFunction{
         if(getArgument(0).getClass().equals(PatternTypeInteger.class)){
             length = getArgument(0).evaluate(subject, pos).getIntValue();
         } else {
-            PatternElem argElem = (PatternElem)resolveArguments(getArguments());
-            length = argElem.
+            //PatternElem argElem = (PatternElem)resolveArguments(getArguments());
+            //length = argElem.
             // evaluate internal function
-        } else {
+        //} else {
             System.out.println("argument must reduce to an integer.");
         }
         MatchResult result = new MatchResult();

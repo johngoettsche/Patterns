@@ -12,28 +12,22 @@ import java.util.List;
  * @author John H. Goettsche
  */
 public abstract class PatternStructure extends PatternElem {
-    private List<PatternElem> definition;
-    private int patElem;
+    private PatternDefinition definition;
 
-    public void setDefinition(List<PatternElem> definition) {
+    public void setDefinition(PatternDefinition definition) {
         this.definition = definition;
-    }
-
-    public void setPatElem(int patElem) {
-        this.patElem = patElem;
     }
     
     public MatchResult nextMatch(String subject, int pos){
         MatchResult matchResult = new MatchResult();
         matchResult.setSuccess(false);
         while(pos < subject.length()){
-            while(!definition.get(patElem).getClass().equals(PatternElemEnd.class)){
-                matchResult = definition.get(patElem + 1).evaluate(subject, pos);
+            while(definition.hasNext()){
+                matchResult = definition.getNextNext().evaluate(subject, pos);
                 if(matchResult.isSuccess()){
                     return matchResult;
                 }
             }
-            pos++;
         } 
         return matchResult;
     }
