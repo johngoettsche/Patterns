@@ -125,7 +125,7 @@ public class Pattern {
                 }
             }
         }
-        printPatternElements(pat);
+        //printPatternElements(pat);
         return pat;
     }
     
@@ -161,37 +161,31 @@ public class Pattern {
         backResult.setSuccess(true);
 
         while(!matchResult.isSuccess() && pos <= subject.length()) { // no match and chars left
-            //matchString = "";
-            System.out.println("Size: " + definition.size());
-            System.out.println("pos: " + pos + " - " + matchString);
+            definition.start();            
             while(!matchResult.isSuccess() && definition.hasNext()) {
-                System.out.println("\tElem: " + definition.getPosition());
-                PatternElem elem = definition.current();
-                System.out.println("\t" + elem.getElementName());
                 //not last pattern element
                 //needs adjusted for operators possibly try MatchResult and reduce PatternElem variables
+                PatternElem elem = definition.current();
                 elem.setOldPos(pos);
                 elem.setSubString(matchString);
                 //
                 if(!elem.getClass().equals(PatternOperatorAlternate.class)) { //not Alternate 
                     if(definition.hasPrevious()) { //not first element
                         if (definition.getPrevious().getClass().getSuperclass().equals(PatternElem.class) || 
-                                definition.getPrevious().getClass().getSuperclass().equals(PatternFunction.class)){
-                            //proceded by function, pattern, string
+                                definition.getPrevious().getClass().getSuperclass().equals(PatternFunction.class) ||
+                                definition.getPrevious().getClass().getSuperclass().equals(PatternStructure.class)){
+                            //proceded by function, structure, pattern, string
                             if(elem.getClass().getSuperclass().equals(PatternOperator.class)) {
                                 //is an operator
                                 elem.setSubString(matchString);
-                                System.out.println("\t\t" + subject.substring(pos));
                                 internalResult = elem.evaluate(subject, pos);
                             } else { // not an operator
                                 throw new PatternException("Pattern Element or Pattern Function must be followed by a Pattern Operator.");
                             }
                         } else {//proceded by an operator
-                            System.out.println("\t\t" + subject.substring(pos));
                             internalResult = elem.evaluate(subject, pos);
                         }
                     } else { //first element
-                        System.out.println("\t\t" + subject.substring(pos));
                         internalResult = elem.evaluate(subject, pos);
                     }
                 } else { //alternation.
@@ -225,14 +219,14 @@ public class Pattern {
     }
     
     private void findOperatorAlternate(){
-        System.out.println("---");
         while(!definition.hasNext()) {
             //System.out.println("finding Alternate: " + definition.get(patElem).getElementName());
-            if(definition.current().getClass().equals(PatternOperatorAlternate.class)) {
+            if(definition.current().getClass().equals(PatternOperatorAlternate.class) || 
+                    definition.current().getClass().equals(PatternElemNull.class)) {
                 break;
             }
+            definition.next();
         }
-        System.out.println("===");
     }
     
     private void printPatternElements(PatternElem pat){
