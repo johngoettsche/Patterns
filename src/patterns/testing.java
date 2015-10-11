@@ -16,6 +16,7 @@ public class testing {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        //PatternMatch patternMatch = new PatternMatch();
         Pattern testPat = new Pattern("'cde' + 'f'");
         System.out.println(testPat.match("abcdefg"));
     }

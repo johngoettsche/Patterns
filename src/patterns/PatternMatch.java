@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package patterns;
 
 /**
@@ -11,31 +10,69 @@ package patterns;
  * @author John H. Goettsche
  */
 public class PatternMatch {
-    public String subject;
-    public Pattern pattern;
-    public int pos;
+    private PatternDefinitionIterator definition;
+    private String subject;
+    private int pos;
+    private MatchResult matchResult;
     
-    public PatternMatch(String s, Pattern pat){
-        subject = s;
-        pattern = pat;
-        pos = 0;
+    PatternMatchState posState;
+    PatternMatchState internalMatch;
+    PatternMatchState returnValue;
+    
+    PatternMatchState state;
+    
+    public PatternMatch(String s, PatternDefinitionIterator def, int p){
+        this.definition = def;
+        this.subject = s;
+        this.pos = p;
+        
+        posState = new PatternMatchStatePos(this);
+        matchResult = new MatchResult();
+        matchResult.setPos(p);
+        matchResult.setSuccess(false);
+        internalMatch = new PatternMatchStateInternalMatch(this);
+        
+        state = posState;
+    }
+    
+    public void setState(PatternMatchState newState){
+        state = newState;
+    }
+
+    public void setPattern(PatternDefinitionIterator def) {
+        this.definition = def;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void setPos(int pos) {
+        this.pos = pos;
+    }
+
+    public void setMatchResult(MatchResult matchResult) {
+        this.matchResult = matchResult;
+    }
+    
+    public PatternMatchState getState(){
+        return state;
+    }
+
+    public PatternDefinitionIterator getDefinition() {
+        return definition;
     }
 
     public String getSubject() {
         return subject;
     }
 
-    public Pattern getPattern() {
-        return pattern;
-    }
-
     public int getPos() {
         return pos;
     }
-    
-    public String match(){
-        String result = "";
-        
-        return result;
+
+    public MatchResult getMatchResult() {
+        return matchResult;
     }
+    
 }

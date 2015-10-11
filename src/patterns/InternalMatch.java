@@ -12,31 +12,77 @@ package patterns;
  */
 public class InternalMatch {
     private String subject;
-    private int pos;
-    private Pattern pattern;
-    private int value;
+    private PatternMatch patternMatch;
+    private PatternDefinitionIterator definition;
+    private MatchResult internalResult;
     
-    public InternalMatch(String s, int p, Pattern pat, int v){
-        subject = s;
-        pos = p;
-        pattern = pat;
-        value = v;
+    InternalMatchState getPatternFunction;
+    InternalMatchState evaluation;
+    InternalMatchState returnValue;
+    
+    private PatternElem currentElement;
+    private int elem;
+    
+    private InternalMatchState state;
+    
+    public InternalMatch(String s, PatternMatch pm){
+        this.subject = s;
+        this.patternMatch = pm;
+        this.definition = this.patternMatch.getDefinition();
+        this.internalResult = new MatchResult();
+        this.internalResult.setPos(this.patternMatch.getPos());
+        this.internalResult.setSubString("");
+        
+        getPatternFunction = new InternalMatchStateGetPatternFunction(this);
+        evaluation = new InternalMatchStateEvaluation(this);
+        returnValue = new InternalMatchStateReturnValue(this);
+        
+        state = getPatternFunction;
+    }
+
+    public PatternElem getCurrentElement() {
+        return currentElement;
+    }
+
+    public PatternDefinitionIterator getDefinition() {
+        return definition;
+    }
+
+    public int getElem() {
+        return elem;
+    }
+
+    public PatternMatch getPatternMatch() {
+        return patternMatch;
+    }
+
+    public MatchResult getInternalResult() {
+        return internalResult;
+    }
+    
+
+    public InternalMatchState getState() {
+        return state;
     }
 
     public String getSubject() {
         return subject;
+    }    
+
+    public void setCurrentElement(PatternElem currentElement) {
+        this.currentElement = currentElement;
     }
 
-    public int getPos() {
-        return pos;
+    public void setElem(int elem) {
+        this.elem = elem;
+    }
+    
+    public void setState(InternalMatchState state) {
+        this.state = state;
     }
 
-    public Pattern getPattern() {
-        return pattern;
+    public void setInternalResult(MatchResult internalResult) {
+        this.internalResult = internalResult;
     }
-
-    public int getValue() {
-        return value;
-    }
-      
+    
 }

@@ -12,9 +12,9 @@ import java.util.List;
  * @author John H. Goettsche
  */
 public abstract class PatternStructure extends PatternElem {
-    private PatternDefinition definition;
+    private PatternDefinitionIterator definition;
 
-    public void setDefinition(PatternDefinition definition) {
+    public void setDefinition(PatternDefinitionIterator definition) {
         this.definition = definition;
     }
     

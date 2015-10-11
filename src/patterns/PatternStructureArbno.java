@@ -12,7 +12,7 @@ import java.util.List;
  * @author John H. Goettsche
  */
 public class PatternStructureArbno extends PatternStructure{
-    public PatternStructureArbno(PatternDefinition def, String args){
+    public PatternStructureArbno(PatternDefinitionIterator def, String args){
         setDefinition(def);
         setArguments(defineFuncArguments(args));
         setElementName("Pattern Structure Abort()");

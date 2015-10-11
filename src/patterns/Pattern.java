@@ -6,9 +6,6 @@
 
 package patterns;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.StringTokenizer;
 
 /**
@@ -17,7 +14,8 @@ import java.util.StringTokenizer;
  */
 
 public class Pattern {
-    PatternDefinition definition = new PatternDefinition();
+    PatternDefinitionIterator definition = new PatternDefinitionIterator();
+    PatternMatch patternMatch;
     //List<PatternElem> definition = new ArrayList();
     
     public Pattern(){
@@ -132,12 +130,16 @@ public class Pattern {
     public String match(String subject){
         int pos = 0;
         String result = "";
-        try {
+        patternMatch = new PatternMatch(subject, definition, 0);
+        patternMatch.getState().notEndOfSubject();
+        return patternMatch.getMatchResult().getSubString();
+        /*try {
             result = patternMatch(subject, pos).getSubString();
         } catch (PatternException ex){
             System.out.println(ex);
-        }
-        return result;
+        }*/
+        
+        //return result;
     }
     
     public MatchResult match(String subject, int pos){
@@ -227,6 +229,10 @@ public class Pattern {
             }
             definition.next();
         }
+    }
+
+    public PatternDefinitionIterator getDefinition() {
+        return definition;
     }
     
     private void printPatternElements(PatternElem pat){

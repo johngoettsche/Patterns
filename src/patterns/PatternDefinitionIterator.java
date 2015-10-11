@@ -12,12 +12,12 @@ import java.util.List;
  *
  * @author John H. Goettsche
  */
-public class PatternDefinition {
+public class PatternDefinitionIterator {
     List<PatternElem> definition;
     int position;
     PatternElem nullElem = new PatternElemNull();
 
-    public PatternDefinition() {
+    public PatternDefinitionIterator() {
         definition = new ArrayList();
         position = 0;
     }
@@ -31,13 +31,19 @@ public class PatternDefinition {
     }
 
     public boolean hasNext() {
-        if(position >= definition.size() || definition.get(position) == null){
+        if(position >= definition.size() || 
+                definition.get(position) == null
+                ){
             return false;
         } else {
             return true;
         }
     }
 
+    public void start() {
+        position = 0;
+    }
+    
     public void next() {
         position++;
     }
