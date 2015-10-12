@@ -114,15 +114,48 @@ public abstract class PatternElem {
                 } else {
                     switch(patternLabel){
                         //will copy all the cases later...
-                        case Len :
-                            pat = new PatternFunctionLen(internalArgument);
-                            break;
-                        case Span :
-                            pat = new PatternFunctionSpan(internalArgument);
-                            break;
-                        default :
-                            System.out.println("Unknown Pattern Element.");
-                            break;
+                        case Abort :
+                        pat = new PatternStructureAbort(internalArgument);
+                        break;
+                    case Any :
+                        pat = new PatternFunctionAny(internalArgument);
+                        break;
+                    /*case Arb :
+                        pat = new PatternStructureArb(definition, internalArgument);
+                        break;
+                    case Arbno :
+                        pat = new PatternStructureArbno(definition, internalArgument);
+                        break;*/
+                    case Break :
+                        pat = new PatternFunctionBreak(internalArgument);
+                        break;
+                    case Fail :
+                        pat = new PatternFunctionFail(internalArgument);
+                        break;
+                    case Len :
+                        pat = new PatternFunctionLen(internalArgument);
+                        break;
+                    case NotAny :
+                        pat = new PatternFunctionNotAny(internalArgument);
+                        break;
+                    case Rem :
+                        pat = new PatternFunctionRem(internalArgument);
+                        break;
+                    case RTab :
+                        pat = new PatternFunctionRTab(internalArgument);
+                        break;
+                    case Span :
+                        pat = new PatternFunctionSpan(internalArgument);
+                        break;
+                    case Success :
+                        pat = new PatternFunctionSucceed(internalArgument);
+                        break;
+                    case Tab :
+                        pat = new PatternFunctionTab(internalArgument);
+                        break;
+                    default :
+                        System.out.println("Unknown Pattern Element.");
+                        break;
                     }
                 }
                 funcArgs.add(pat);

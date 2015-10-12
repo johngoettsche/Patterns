@@ -17,7 +17,7 @@ public class testing {
      */
     public static void main(String[] args) {
         //PatternMatch patternMatch = new PatternMatch();
-        Pattern testPat = new Pattern("'cde' + 'f'");
+        Pattern testPat = new Pattern("('cde' + 'f') | (Len(3) + Fail()");
         System.out.println(testPat.match("abcdefg"));
     }
 }

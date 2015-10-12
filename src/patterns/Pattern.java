@@ -17,6 +17,7 @@ public class Pattern {
     PatternDefinitionIterator definition = new PatternDefinitionIterator();
     PatternMatch patternMatch;
     //List<PatternElem> definition = new ArrayList();
+    PatternElem nullElem = new PatternElemNull();
     
     public Pattern(){
         
@@ -31,20 +32,22 @@ public class Pattern {
     }
     
     private void patternDefinition(String p){
-        PatternElem pat;
+        PatternElem pat = nullElem;
         String token;
         StringTokenizer stringTokenizer = new StringTokenizer(p);
         while (stringTokenizer.hasMoreTokens()) {
             token = stringTokenizer.nextToken();
-            pat = definePatternElem(token);
+            try { 
+                pat = definePatternElem(p, token);
+            } catch (PatternException ex) {
+                System.out.println(ex);
+            }
             definition.add(pat);
         }
-        //PatternElem endElem = new PatternElemEnd();
-        //definition.add(endElem);
     }
     
-    public PatternElem definePatternElem(String token){
-        PatternElem nullElem = new PatternElemNull();
+    public PatternElem definePatternElem(String p, String token) throws PatternException {
+        //PatternElem nullElem = new PatternElemNull();
         int braceL, braceR;
         PatternLabel patternLabel;
         
@@ -54,13 +57,11 @@ public class Pattern {
         braceL = token.indexOf("(");
         if (braceL != -1) { //a pattern or a pattern function
             patternName = token.substring(0, braceL);
-            patternLabel = PatternLabel.valueOf(patternName);
-            braceR = token.lastIndexOf(")");
-            if(braceR != -1) arguments = token.substring((braceL + 1), braceR);
-            else System.out.println("Pattern Fucntion needs a \")\"");
-            if(patternName.isEmpty()) { //a pattern
-                pat = new PatternElemPattern(arguments);
-            } else {//a pattern function
+            if(patternName.length() > 0) {
+                braceR = findClosingSymbol(token, "(", braceL);
+                if(braceR != -1) arguments = token.substring((braceL + 1), braceR);
+                else throw new PatternException("Pattern Fucntion needs a \")\"");
+                patternLabel = PatternLabel.valueOf(patternName);
                 switch(patternLabel){
                     case Abort :
                         pat = new PatternStructureAbort(arguments);
@@ -102,9 +103,14 @@ public class Pattern {
                         pat = new PatternFunctionTab(arguments);
                         break;
                     default :
-                        System.out.println("Unknown Pattern Element.");
-                        break;
+                        throw new PatternException("Unknown Pattern Element.");
                 } //end pattern function
+            } else {
+                braceL = p.indexOf("(");
+                braceR = findClosingSymbol(p, "(", braceL);
+                if(braceR != -1)arguments = p.substring(braceL, braceR - 1);
+                else throw new PatternException("Pattern bracket needs a closing \")\"");
+                pat = new PatternElemPattern(arguments);
             }
         } else {
             patternName = token;
@@ -113,7 +119,7 @@ public class Pattern {
                     String st = token.substring(1, (token.length() - 1));
                     pat = new PatternElemString(st);
                 } else {
-                    System.out.println("String Pattern Type must end with \"'\"");
+                    throw new PatternException("String Pattern Type must end with \"'\"");
                 }
             } else { //existing patterns or operators
                 if(token.contentEquals("|")){
@@ -123,23 +129,39 @@ public class Pattern {
                 }
             }
         }
-        //printPatternElements(pat);
+        printPatternElements(pat);
         return pat;
+    }
+    
+    public int findClosingSymbol(String subject, String startingSymbol, int left){
+        int location = 0;
+        String closingSymbol = "";
+        if(startingSymbol.equals("'") || startingSymbol.equals("`")) closingSymbol = startingSymbol;
+        else if(startingSymbol.equals("(")) closingSymbol = ")";
+        else if(startingSymbol.equals("[")) closingSymbol = "]";
+        else if(startingSymbol.equals("{")) closingSymbol = "}";
+        int count = 1;
+        for(int pos = left + 1; pos < subject.length(); pos++){
+            if(String.valueOf(subject.charAt(pos)) == startingSymbol) count ++;
+            else if(String.valueOf(subject.charAt(pos)) == closingSymbol) count--;
+            if(count == 0) return pos;
+        }
+        return -1;
     }
     
     public String match(String subject){
         int pos = 0;
         String result = "";
-        patternMatch = new PatternMatch(subject, definition, 0);
+        /*patternMatch = new PatternMatch(subject, definition, 0);
         patternMatch.getState().notEndOfSubject();
-        return patternMatch.getMatchResult().getSubString();
-        /*try {
+        return patternMatch.getMatchResult().getSubString();*/
+        try {
             result = patternMatch(subject, pos).getSubString();
         } catch (PatternException ex){
             System.out.println(ex);
-        }*/
+        }
         
-        //return result;
+        return result;
     }
     
     public MatchResult match(String subject, int pos){
