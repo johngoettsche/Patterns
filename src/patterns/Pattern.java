@@ -24,127 +24,137 @@ public class Pattern {
     }
     
     public Pattern(String p){
-        patternDefinition(p);
+        try {
+            patternDefinition(p);
+        } catch(PatternException ex) {
+            System.out.println(ex);
+        }
     }
     
     public void define(String p){
-        patternDefinition(p);
+        try {
+            patternDefinition(p);
+        } catch(PatternException ex) {
+            System.out.println(ex);
+        }
     }
     
-    private void patternDefinition(String p){
+    private void patternDefinition(String pattern) throws PatternException{
         PatternElem pat = nullElem;
+        int pos = 0;
         String token;
-        StringTokenizer stringTokenizer = new StringTokenizer(p);
-        while (stringTokenizer.hasMoreTokens()) {
-            token = stringTokenizer.nextToken();
-            try { 
-                pat = definePatternElem(p, token);
-            } catch (PatternException ex) {
-                System.out.println(ex);
-            }
-            definition.add(pat);
-        }
-    }
-    
-    public PatternElem definePatternElem(String p, String token) throws PatternException {
-        //PatternElem nullElem = new PatternElemNull();
         int braceL, braceR;
+        String args;
         PatternLabel patternLabel;
-        
-        String patternName = "";
-        String arguments = "";
-        PatternElem pat = nullElem;
-        braceL = token.indexOf("(");
-        if (braceL != -1) { //a pattern or a pattern function
-            patternName = token.substring(0, braceL);
-            if(patternName.length() > 0) {
-                braceR = findClosingSymbol(token, "(", braceL);
-                if(braceR != -1) arguments = token.substring((braceL + 1), braceR);
-                else throw new PatternException("Pattern Fucntion needs a \")\"");
-                patternLabel = PatternLabel.valueOf(patternName);
-                switch(patternLabel){
-                    case Abort :
-                        pat = new PatternStructureAbort(arguments);
-                        break;
-                    case Any :
-                        pat = new PatternFunctionAny(arguments);
-                        break;
-                    case Arb :
-                        pat = new PatternStructureArb(definition, arguments);
-                        break;
-                    case Arbno :
-                        pat = new PatternStructureArbno(definition, arguments);
-                        break;
-                    case Break :
-                        pat = new PatternFunctionBreak(arguments);
-                        break;
-                    case Fail :
-                        pat = new PatternFunctionFail(arguments);
-                        break;
-                    case Len :
-                        pat = new PatternFunctionLen(arguments);
-                        break;
-                    case NotAny :
-                        pat = new PatternFunctionNotAny(arguments);
-                        break;
-                    case Rem :
-                        pat = new PatternFunctionRem(arguments);
-                        break;
-                    case RTab :
-                        pat = new PatternFunctionRTab(arguments);
-                        break;
-                    case Span :
-                        pat = new PatternFunctionSpan(arguments);
-                        break;
-                    case Success :
-                        pat = new PatternFunctionSucceed(arguments);
-                        break;
-                    case Tab :
-                        pat = new PatternFunctionTab(arguments);
-                        break;
-                    default :
-                        throw new PatternException("Unknown Pattern Element.");
-                } //end pattern function
-            } else {
-                braceL = p.indexOf("(");
-                braceR = findClosingSymbol(p, "(", braceL);
-                if(braceR != -1)arguments = p.substring(braceL, braceR - 1);
-                else throw new PatternException("Pattern bracket needs a closing \")\"");
-                pat = new PatternElemPattern(arguments);
-            }
-        } else {
-            patternName = token;
-            if(token.startsWith("'")){
-                if(token.endsWith("'")){
-                    String st = token.substring(1, (token.length() - 1));
-                    pat = new PatternElemString(st);
-                } else {
-                    throw new PatternException("String Pattern Type must end with \"'\"");
+        while(pos < pattern.length()){
+            
+            braceL = pattern.indexOf("(");
+            if(braceL >= 0) {
+                System.out.println(pos + " : " + braceL);
+                token = pattern.substring(braceL, pos);
+                if(token.length() > 0) { //pattern functions
+                    braceR = findClosingSymbol(token, "(", braceL);
+                    if(braceR != -1) args = token.substring((braceL + 1), braceR);
+                    else throw new PatternException("Pattern Fucntion needs a \")\"");
+                    System.out.println(args);
+                    patternLabel = PatternLabel.valueOf(token);
+                    switch(patternLabel){
+                        case Abort :
+                            pat = new PatternStructureAbort(args);
+                            break;
+                        case Any :
+                            pat = new PatternFunctionAny(args);
+                            break;
+                        case Arb :
+                            pat = new PatternStructureArb(definition, args);
+                            break;
+                        case Arbno :
+                            pat = new PatternStructureArbno(definition, args);
+                            break;
+                        case Break :
+                            pat = new PatternFunctionBreak(args);
+                            break;
+                        case Fail :
+                            pat = new PatternFunctionFail(args);
+                            break;
+                        case Len :
+                            pat = new PatternFunctionLen(args);
+                            break;
+                        case NotAny :
+                            pat = new PatternFunctionNotAny(args);
+                            break;
+                        case Rem :
+                            pat = new PatternFunctionRem(args);
+                            break;
+                        case RTab :
+                            pat = new PatternFunctionRTab(args);
+                            break;
+                        case Span :
+                            pat = new PatternFunctionSpan(args);
+                            break;
+                        case Success :
+                            pat = new PatternFunctionSucceed(args);
+                            break;
+                        case Tab :
+                            pat = new PatternFunctionTab(args);
+                            break;
+                        default :
+                            throw new PatternException("Unrecognized Pattern Function.");
+                    } 
+                    pos = braceR + 1;
+                    //end patternFunctions
+                } else { //a pattern subset
+                    braceR = findClosingSymbol(pattern, "(", braceL);
+                    if(braceR != -1) args = pattern.substring(braceL + 1, braceR);
+                    else throw new PatternException("Pattern bracket needs a closing \")\"");
+                    System.out.println("---Internal Pattern---");
+                    System.out.println(args);
+                    pat = new PatternElemPattern(args);
+                    System.out.println("---End Internal Pattern---");
+                    pos = braceR;
                 }
-            } else { //existing patterns or operators
-                if(token.contentEquals("|")){
+            } else {//a string or cset
+                braceL = pos;
+                System.out.println(pos + " : " + pattern.length());
+                if(String.valueOf(pattern.charAt(pos)).equals("'")) {//is a string element
+                    braceR = findClosingSymbol(pattern, "'", braceL);
+                    System.out.println("R: " + braceR);
+                    if(braceR >= 0) {
+                        token = token = pattern.substring(pos, braceL);
+                        pat = new PatternElemString(token);
+                        pos = braceR + 1;
+                    }
+                } else if(String.valueOf(pattern.charAt(pos)).equals("|")) {//is a cset
                     pat = new PatternOperatorAlternate();
-                } else if(token.contentEquals("+")){
+                    pos++;
+                } else if(String.valueOf(pattern.charAt(pos)).equals("+")) {//is a cset
                     pat = new PatternOperatorConcat();
+                    pos++;
+                } else {
+                    throw new PatternException("Unrecognized Pattern Element.");
                 }
             }
-        }
-        printPatternElements(pat);
-        return pat;
+            while(pos < pattern.length() && String.valueOf(pattern.charAt(pos)).equals(" ")) { pos++; }
+        }//end while
     }
     
     public int findClosingSymbol(String subject, String startingSymbol, int left){
-        int location = 0;
         String closingSymbol = "";
+        System.out.println(subject + " : " + startingSymbol + " : " + left);
         if(startingSymbol.equals("'") || startingSymbol.equals("`")) closingSymbol = startingSymbol;
         else if(startingSymbol.equals("(")) closingSymbol = ")";
         else if(startingSymbol.equals("[")) closingSymbol = "]";
         else if(startingSymbol.equals("{")) closingSymbol = "}";
+        System.out.println("Closing Symbol: " + closingSymbol);
         int count = 1;
         for(int pos = left + 1; pos < subject.length(); pos++){
-            if(String.valueOf(subject.charAt(pos)) == startingSymbol) count ++;
-            else if(String.valueOf(subject.charAt(pos)) == closingSymbol) count--;
-            if(count == 0) return pos;
+            if(String.valueOf(subject.charAt(pos)).equals(closingSymbol)) count--;
+            else if(String.valueOf(subject.charAt(pos)).equals(startingSymbol)) count++;
+            System.out.println(count);
+            if(count == 0) {
+                System.out.println(left + " : " + pos);
+                return pos;
+            }
         }
         return -1;
     }

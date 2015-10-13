@@ -5,6 +5,8 @@
  */
 package patterns;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author John H. Goettsche
@@ -13,6 +15,7 @@ public class PatternElemPattern extends PatternElem {
     Pattern pattern;
     
     public PatternElemPattern(String pat){
+        setArguments(new ArrayList());
         pattern = new Pattern(pat);
     }
     
