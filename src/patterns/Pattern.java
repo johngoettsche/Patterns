@@ -44,16 +44,35 @@ public class Pattern {
         int pos = 0;
         String token;
         int braceL, braceR;
+        int oldPos;
         String args;
         PatternLabel patternLabel;
+        System.out.println(pattern);
         while(pos < pattern.length()){
-            
+            while(pattern.charAt(pos) == ' ') pos++;
+            System.out.println(pattern.charAt(pos));
+            oldPos = pos;
             braceL = pattern.indexOf("(");
+            System.out.println("braceL: " + braceL);
+            System.out.println("pos: " + pos);
             if(braceL >= 0) {
-                System.out.println(pos + " : " + braceL);
-                token = pattern.substring(braceL, pos);
-                if(token.length() > 0) { //pattern functions
-                    braceR = findClosingSymbol(token, "(", braceL);
+                braceR = findClosingSymbol(pattern, "(", braceL);
+                System.out.println("start: " + braceL + " end: " + (braceR + 1));
+                System.out.println(oldPos + "|" + braceL);
+                token = pattern.substring(braceL, oldPos);
+                //token = pattern.substring(oldPos, braceL);
+                System.out.println("token: " + token);
+                if(token.contains("|")){
+                    pat = new PatternOperatorAlternate();
+                    System.out.println("-----");
+                    pos++;
+                    System.out.println(pos);
+                } else if(token.contains("+")){
+                    pat = new PatternOperatorConcat();
+                    System.out.println("-----");
+                    pos++;
+                    System.out.println(pos);
+                } else if(token.length() > 0) { //pattern functions
                     if(braceR != -1) args = token.substring((braceL + 1), braceR);
                     else throw new PatternException("Pattern Fucntion needs a \")\"");
                     System.out.println(args);
@@ -111,11 +130,12 @@ public class Pattern {
                     System.out.println(args);
                     pat = new PatternElemPattern(args);
                     System.out.println("---End Internal Pattern---");
-                    pos = braceR;
+                    pos = braceR + 1;
                 }
             } else {//a string or cset
                 braceL = pos;
                 System.out.println(pos + " : " + pattern.length());
+                System.out.println(pattern.charAt(pos));
                 if(String.valueOf(pattern.charAt(pos)).equals("'")) {//is a string element
                     braceR = findClosingSymbol(pattern, "'", braceL);
                     System.out.println("R: " + braceR);
@@ -126,15 +146,20 @@ public class Pattern {
                     }
                 } else if(String.valueOf(pattern.charAt(pos)).equals("|")) {//is a cset
                     pat = new PatternOperatorAlternate();
+                    System.out.println("-----");
                     pos++;
+                    System.out.println(pos);
                 } else if(String.valueOf(pattern.charAt(pos)).equals("+")) {//is a cset
                     pat = new PatternOperatorConcat();
+                    System.out.println("-----");
                     pos++;
+                    System.out.println(pos);
                 } else {
                     throw new PatternException("Unrecognized Pattern Element.");
                 }
             }
             while(pos < pattern.length() && String.valueOf(pattern.charAt(pos)).equals(" ")) { pos++; }
+            printPatternElements(pat);
         }//end while
     }
     
