@@ -20,7 +20,7 @@ public class PatternOperatorAlternate extends PatternOperator{
     
     public MatchResult evaluate(String subject, int pos){
         MatchResult result = new MatchResult();
-        result.setPos(0);
+        result.setPos(pos);
         result.setSubString("");
         
         return result;

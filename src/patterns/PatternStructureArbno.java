@@ -12,15 +12,30 @@ import java.util.List;
  * @author John H. Goettsche
  */
 public class PatternStructureArbno extends PatternStructure{
+    Pattern patternArgument;
+    
     public PatternStructureArbno(PatternDefinitionIterator def, String args){
         setDefinition(def);
         setArguments(defineFuncArguments(args));
-        setElementName("Pattern Structure Abort()");
+        setElementName("Pattern Structure Arbno()");
+        patternArgument = new Pattern(args);
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult matchResult = nextMatch(subject, pos);
-        matchResult.setSubString(subject.substring(pos, matchResult.getPos()));
+        MatchResult matchResult = new MatchResult(pos, "");
+        matchResult.setSuccess(false);
+        MatchResult internalMatch = new MatchResult(pos, "");
+        internalMatch.setSuccess(true);
+        MatchResult nextMatch;
+        nextMatch = nextMatch(subject, pos);
+        
+        while(internalMatch.isSuccess() && !nextMatch.isSuccess()) {
+            matchResult.setSubString(matchResult.getSubString() + internalMatch.getSubString());
+            matchResult.setPos(internalMatch.getPos());
+            internalMatch = patternArgument.match(subject, pos);
+            pos++;
+            nextMatch = nextMatch(subject, pos);
+        } 
         matchResult.setSuccess(true);
         return matchResult;
     }  

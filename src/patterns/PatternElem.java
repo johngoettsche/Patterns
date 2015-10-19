@@ -25,9 +25,9 @@ public abstract class PatternElem {
     
     public abstract MatchResult evaluate(String subject, int pos);
     
-    public PatternElem(){
+/*    public PatternElem(){
         
-    }
+    }*/
     
     public Class getPatternType(){
         return element.getClass();

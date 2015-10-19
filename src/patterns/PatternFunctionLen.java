@@ -5,21 +5,23 @@
  */
 package patterns;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type;
-import java.util.StringTokenizer;
+//import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type;
+//import java.util.StringTokenizer;
 
 /**
  *
  * @author John H. Goettsche
  */
-public class PatternFunctionLen extends PatternFunction{
+public class PatternFunctionLen extends PatternFunction {
     
     public PatternFunctionLen(String args){
         setArguments(defineFuncArguments(args));
         setElementName("Pattern Function Len()");
     }
     
-    public MatchResult evaluate(String subject, int pos){
+    
+    @Override
+    public MatchResult evaluate(String subject, int pos) {
         int oldPos = pos;
         int length = 0;
         if(getArgument(0).getClass().equals(PatternTypeInteger.class)){

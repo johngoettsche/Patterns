@@ -14,20 +14,28 @@ import java.util.List;
 public abstract class PatternStructure extends PatternElem {
     private PatternDefinitionIterator definition;
 
-    public void setDefinition(PatternDefinitionIterator definition) {
-        this.definition = definition;
+    public void setDefinition(PatternDefinitionIterator def) {
+        this.definition = def;
     }
     
     public MatchResult nextMatch(String subject, int pos){
+        int start = pos;
+        int endPos = pos;
         MatchResult matchResult = new MatchResult();
         matchResult.setSuccess(false);
         while(pos < subject.length()){
-            while(definition.hasNext()){
-                matchResult = definition.getNextNext().evaluate(subject, pos);
-                if(matchResult.isSuccess()){
-                    return matchResult;
-                }
+            if(definition.getNextNext().getClass().equals(PatternOperatorConcat.class)){
+                definition.next();
+                continue;
             }
+            endPos = pos;
+            matchResult = definition.getNextNext().evaluate(subject, pos);
+            if(matchResult.isSuccess()){
+                matchResult.setSubString(subject.substring(start, endPos));
+                matchResult.setPos(endPos);
+                return matchResult;
+            }
+            pos++;
         } 
         return matchResult;
     }

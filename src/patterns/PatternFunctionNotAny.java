@@ -15,6 +15,7 @@ public class PatternFunctionNotAny extends PatternFunction {
         setElementName("Pattern Function NotAny()");
     }
     
+    @Override
     public MatchResult evaluate(String subject, int pos){
         MatchResult result = new MatchResult();
         int stop = endCSet(subject, pos, getArgument(0).getCharSet());

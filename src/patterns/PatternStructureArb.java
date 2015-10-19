@@ -15,13 +15,17 @@ public class PatternStructureArb extends PatternStructure {
     public PatternStructureArb(PatternDefinitionIterator def, String args){
         setDefinition(def);
         setArguments(defineFuncArguments(args));
-        setElementName("Pattern Structure Abort()");
+        setElementName("Pattern Structure Arb()");
     }
     
     public MatchResult evaluate(String subject, int pos){
+        int start = pos;
         MatchResult matchResult = nextMatch(subject, pos);
-        matchResult.setSubString(subject.substring(pos, matchResult.getPos()));
-        matchResult.setSuccess(true);
+        if(matchResult.isSuccess()) {
+            matchResult.setSubString(subject.substring(start, matchResult.getPos()));
+        } else {
+            matchResult.setSubString("");
+        }
         return matchResult;
     }  
 }

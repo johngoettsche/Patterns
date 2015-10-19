@@ -30,6 +30,10 @@ public class PatternDefinitionIterator {
         return position;
     }
 
+    public void start() {
+        position = 0;
+    }
+    
     public boolean hasNext() {
         if(position >= definition.size() || 
                 definition.get(position) == null
@@ -38,10 +42,6 @@ public class PatternDefinitionIterator {
         } else {
             return true;
         }
-    }
-
-    public void start() {
-        position = 0;
     }
     
     public void next() {
@@ -62,10 +62,12 @@ public class PatternDefinitionIterator {
     }
     
     public PatternElem getNextNext() {
-        if (hasNext()) {
-            return definition.get(position);
-        } else {
+        if(position + 1 >= definition.size() || 
+                definition.get(position) == null
+                ){
             return nullElem;
+        } else {
+            return definition.get(position + 1);
         }
     }
     

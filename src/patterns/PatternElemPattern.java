@@ -17,10 +17,11 @@ public class PatternElemPattern extends PatternElem {
     public PatternElemPattern(String pat){
         setArguments(new ArrayList());
         pattern = new Pattern(pat);
+        setElementName("Pattern Elem Pattern " + pat);
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult matchResult = new MatchResult(0, "");
+        MatchResult matchResult = new MatchResult(pos, "");
         matchResult = pattern.match(subject, pos);
         return matchResult;
     } 

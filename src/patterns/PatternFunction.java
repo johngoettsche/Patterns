@@ -13,4 +13,7 @@ import java.util.List;
  */
 public abstract class PatternFunction extends PatternElem{
 
+    @Override
+    public abstract MatchResult evaluate(String subject, int pos);
+
 }

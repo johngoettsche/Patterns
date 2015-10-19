@@ -18,6 +18,7 @@ public class Pattern {
     PatternMatch patternMatch;
     //List<PatternElem> definition = new ArrayList();
     PatternElem nullElem = new PatternElemNull();
+    boolean anchored;
     
     public Pattern(){
         
@@ -44,37 +45,49 @@ public class Pattern {
         int pos = 0;
         String token;
         int braceL, braceR;
+        int start, stop;
         int oldPos;
         String args;
         PatternLabel patternLabel;
-        System.out.println(pattern);
+        //ystem.out.println(pattern);
+        //clear beginning whitespace
+        while(pattern.charAt(pos) == ' ' && pos < pattern.length()) pos++;
         while(pos < pattern.length()){
-            while(pattern.charAt(pos) == ' ') pos++;
-            System.out.println(pattern.charAt(pos));
-            oldPos = pos;
-            braceL = pattern.indexOf("(");
-            System.out.println("braceL: " + braceL);
-            System.out.println("pos: " + pos);
+            oldPos = pos; 
+            braceL = pattern.indexOf("(", pos);
+            // this section need to be re done
+            // must check for next:
+            //     string element
+            //     operator
+            //     pattern function
+            //     sub pattern
+            // then process accordingly
             if(braceL >= 0) {
                 braceR = findClosingSymbol(pattern, "(", braceL);
-                System.out.println("start: " + braceL + " end: " + (braceR + 1));
-                System.out.println(oldPos + "|" + braceL);
-                token = pattern.substring(braceL, oldPos);
-                //token = pattern.substring(oldPos, braceL);
-                System.out.println("token: " + token);
-                if(token.contains("|")){
+                token = pattern.substring(oldPos, braceL);
+                if(token.contains("'")){
+                    start = token.indexOf("'");
+                    stop = findClosingSymbol(token, "'", start);
+                    pat = new PatternElemString(token.substring(start + 1, stop));
+                    pos = stop + 1;
+                } else if(token.contains("|")){
                     pat = new PatternOperatorAlternate();
-                    System.out.println("-----");
-                    pos++;
-                    System.out.println(pos);
+                   //System.out.println("3-----");
+                    pos = oldPos + 1;
+                   //System.out.println(pos);
                 } else if(token.contains("+")){
                     pat = new PatternOperatorConcat();
-                    System.out.println("-----");
-                    pos++;
-                    System.out.println(pos);
+                   //System.out.println("4-----");
+                    pos = oldPos + 1;
+                    //System.out.println(pos);
                 } else if(token.length() > 0) { //pattern functions
-                    if(braceR != -1) args = token.substring((braceL + 1), braceR);
-                    else throw new PatternException("Pattern Fucntion needs a \")\"");
+                    //System.out.println(braceL + " // " + braceR);
+                    System.out.println(pattern);
+                    if(braceR >= 0) {
+                        args = pattern.substring(braceL + 1, braceR);
+                    } else {
+                        throw new PatternException("Pattern Fucntion needs a \")\"");
+                    }
                     System.out.println(args);
                     patternLabel = PatternLabel.valueOf(token);
                     switch(patternLabel){
@@ -126,58 +139,60 @@ public class Pattern {
                     braceR = findClosingSymbol(pattern, "(", braceL);
                     if(braceR != -1) args = pattern.substring(braceL + 1, braceR);
                     else throw new PatternException("Pattern bracket needs a closing \")\"");
-                    System.out.println("---Internal Pattern---");
-                    System.out.println(args);
+                    //System.out.println("---Internal Pattern---");
+                    //System.out.println(args);
                     pat = new PatternElemPattern(args);
-                    System.out.println("---End Internal Pattern---");
+                    //System.out.println("---End Internal Pattern---");
                     pos = braceR + 1;
                 }
             } else {//a string or cset
                 braceL = pos;
-                System.out.println(pos + " : " + pattern.length());
-                System.out.println(pattern.charAt(pos));
+                //System.out.println(pos + " : " + pattern.length());
+                //System.out.println(pattern.charAt(pos));
                 if(String.valueOf(pattern.charAt(pos)).equals("'")) {//is a string element
                     braceR = findClosingSymbol(pattern, "'", braceL);
-                    System.out.println("R: " + braceR);
+                    //System.out.println("R: " + braceR);
                     if(braceR >= 0) {
-                        token = token = pattern.substring(pos, braceL);
+                        token = token = pattern.substring(braceL + 1, braceR);
                         pat = new PatternElemString(token);
                         pos = braceR + 1;
                     }
                 } else if(String.valueOf(pattern.charAt(pos)).equals("|")) {//is a cset
                     pat = new PatternOperatorAlternate();
-                    System.out.println("-----");
+                    //System.out.println("1-----");
                     pos++;
-                    System.out.println(pos);
+                    //System.out.println(pos);
                 } else if(String.valueOf(pattern.charAt(pos)).equals("+")) {//is a cset
                     pat = new PatternOperatorConcat();
-                    System.out.println("-----");
+                    //System.out.println("2-----");
                     pos++;
-                    System.out.println(pos);
+                    //System.out.println(pos);
                 } else {
                     throw new PatternException("Unrecognized Pattern Element.");
                 }
             }
+            //clear whitespace
             while(pos < pattern.length() && String.valueOf(pattern.charAt(pos)).equals(" ")) { pos++; }
             printPatternElements(pat);
+            definition.add(pat);
         }//end while
     }
     
     public int findClosingSymbol(String subject, String startingSymbol, int left){
         String closingSymbol = "";
-        System.out.println(subject + " : " + startingSymbol + " : " + left);
+        //System.out.println(subject + " : " + startingSymbol + " : " + left);
         if(startingSymbol.equals("'") || startingSymbol.equals("`")) closingSymbol = startingSymbol;
         else if(startingSymbol.equals("(")) closingSymbol = ")";
         else if(startingSymbol.equals("[")) closingSymbol = "]";
         else if(startingSymbol.equals("{")) closingSymbol = "}";
-        System.out.println("Closing Symbol: " + closingSymbol);
+        //System.out.println("Closing Symbol: " + closingSymbol);
         int count = 1;
         for(int pos = left + 1; pos < subject.length(); pos++){
             if(String.valueOf(subject.charAt(pos)).equals(closingSymbol)) count--;
             else if(String.valueOf(subject.charAt(pos)).equals(startingSymbol)) count++;
-            System.out.println(count);
+            //System.out.println(count);
             if(count == 0) {
-                System.out.println(left + " : " + pos);
+                //System.out.println(left + " : " + pos);
                 return pos;
             }
         }
@@ -190,6 +205,7 @@ public class Pattern {
         /*patternMatch = new PatternMatch(subject, definition, 0);
         patternMatch.getState().notEndOfSubject();
         return patternMatch.getMatchResult().getSubString();*/
+        anchored = false;
         try {
             result = patternMatch(subject, pos).getSubString();
         } catch (PatternException ex){
@@ -201,6 +217,7 @@ public class Pattern {
     
     public MatchResult match(String subject, int pos){
         MatchResult result = new MatchResult();
+        anchored = true;
         try {
             result = patternMatch(subject, pos);
         } catch (PatternException ex){
@@ -210,7 +227,7 @@ public class Pattern {
     }
     
     private MatchResult patternMatch(String subject, int pos) throws PatternException {
-        //int oldPos = pos;
+        int oldPos = pos;
         String matchString = "";
         MatchResult matchResult = new MatchResult(pos, matchString);
         matchResult.setSuccess(false);
@@ -218,15 +235,19 @@ public class Pattern {
         internalResult.setSuccess(false);
         MatchResult backResult = new MatchResult(pos, matchString);
         backResult.setSuccess(true);
-
+        //definition.start(); 
         while(!matchResult.isSuccess() && pos <= subject.length()) { // no match and chars left
-            definition.start();            
+            definition.start();   
+            //System.out.println(subject + " : " + pos);
+            //System.out.println("success: " + matchResult.isSuccess());
+            //System.out.println("next: " + definition.hasNext());
             while(!matchResult.isSuccess() && definition.hasNext()) {
                 //not last pattern element
                 //needs adjusted for operators possibly try MatchResult and reduce PatternElem variables
                 PatternElem elem = definition.current();
                 elem.setOldPos(pos);
                 elem.setSubString(matchString);
+                System.out.println(elem.getElementName());
                 //
                 if(!elem.getClass().equals(PatternOperatorAlternate.class)) { //not Alternate 
                     if(definition.hasPrevious()) { //not first element
@@ -248,30 +269,49 @@ public class Pattern {
                         internalResult = elem.evaluate(subject, pos);
                     }
                 } else { //alternation.
+                    if(internalResult.isSuccess()){
+                        matchResult.setSuccess(true);
+                        matchResult.setSubString(matchString);
+                        matchResult.setPos(internalResult.getPos());  
+                        break;
+                    }
                     matchString = "";
+                    internalResult = elem.evaluate(subject, pos);
                     definition.next();
                     continue;
                 } // end alternation
                 
-                definition.next();
+                
                 if(internalResult.isSuccess()) {
+                    //System.out.println("Internal result is a success.");
                     matchString += internalResult.getSubString();
+                    System.out.println("\tmatchString: " + matchString);
                     pos = internalResult.getPos();
                 } else {
                     if(internalResult.getPos() == -1){
                         break;
                     }
+                    //System.out.println("pos at failed internal match: " + pos);
                     findOperatorAlternate();
                 }
+                definition.next();
             } //end checking patterns 
- 
+            
+            //System.out.println("is success: " + internalResult.isSuccess());
             if(internalResult.isSuccess()){//successful internal match
+                System.out.println("\tmatchString on success: " + matchString);
                 matchResult.setSubString(matchString);
                 matchResult.setPos(internalResult.getPos());  
                 matchResult.setSuccess(true);
                 pos = matchResult.getPos();
                 continue;
+            } else if(anchored) {
+                matchResult.setSubString("");
+                matchResult.setPos(oldPos);
+                matchResult.setSuccess(false);
+                break;
             }
+            //System.out.println("\t success at end: " + matchResult.isSuccess());
             pos++;
         }
         return matchResult;
