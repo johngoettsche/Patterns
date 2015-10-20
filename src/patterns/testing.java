@@ -17,7 +17,8 @@ public class testing {
      */
     public static void main(String[] args) {
         //PatternMatch patternMatch = new PatternMatch();
-        Pattern testPat = new Pattern("'a' + Arbno('b') + 'c'");
-        System.out.println(testPat.match("abbbcdefg"));
+        int start = 5;
+        Pattern testPat = new Pattern("start");
+        //System.out.println(testPat.match("abbbcdefg"));
     }
 }
