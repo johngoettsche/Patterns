@@ -22,15 +22,18 @@ public class PatternStructureArbno extends PatternStructure{
     }
     
     public MatchResult evaluate(String subject, int pos){
+        int start;
         MatchResult matchResult = new MatchResult(pos, "");
         matchResult.setSuccess(false);
         MatchResult internalMatch = new MatchResult(pos, "");
         internalMatch.setSuccess(true);
         MatchResult nextMatch;
         nextMatch = nextMatch(subject, pos);
-        
-        while(internalMatch.isSuccess() && !nextMatch.isSuccess()) {
-            matchResult.setSubString(matchResult.getSubString() + internalMatch.getSubString());
+        start = pos;
+        System.out.println(internalMatch.isSuccess());
+        System.out.println(nextMatch.isSuccess());
+        while(internalMatch.isSuccess() && nextMatch.isSuccess()) {
+            matchResult.setSubString(subject.substring(start, pos));
             matchResult.setPos(internalMatch.getPos());
             internalMatch = patternArgument.match(subject, pos);
             pos++;
