@@ -6,7 +6,7 @@
 
 package patterns;
 
-import java.util.StringTokenizer;
+import java.lang.reflect.Field;
 
 /**
  *
@@ -55,6 +55,7 @@ public class Pattern {
         int strL, strR;
         int oldPos;
         String args;
+        
         
         //clear beginning whitespace
         while(pattern.charAt(pos) == ' ' && pos < pattern.length()) pos++;
@@ -108,6 +109,7 @@ public class Pattern {
                     System.out.println("Variable");
                     stop = endLetters(pattern, pos);
                     token = pattern.substring(pos, stop);
+                    
                     
                     //int test = Integer.valueOf(token);
                     //System.out.println(test);
