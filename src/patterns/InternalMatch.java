@@ -31,7 +31,7 @@ public class InternalMatch {
         this.definition = this.patternMatch.getDefinition();
         this.internalResult = new MatchResult();
         this.internalResult.setPos(this.patternMatch.getPos());
-        this.internalResult.setSubString("");
+        this.internalResult.setResult(""); //.setSubString("");
         
         getPatternFunction = new InternalMatchStateGetPatternFunction(this);
         evaluation = new InternalMatchStateEvaluation(this);

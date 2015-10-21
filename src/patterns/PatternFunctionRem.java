@@ -20,12 +20,12 @@ public class PatternFunctionRem extends PatternFunction{
         int newPos = subject.length();        
         MatchResult result = new MatchResult();
         if(newPos >= 0 && newPos > pos){
-            result.setSubString(subject.substring(pos, newPos));
+            result.setResult(subject.substring(pos, newPos)); //.setSubString(subject.substring(pos, newPos));
             result.setPos(newPos);
             result.setSuccess(true);
         } else {
             result.setSuccess(false);
-            result.setSubString("");
+            result.setResult(""); //.setSubString("");
             result.setPos(pos);
         }
         return result;

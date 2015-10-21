@@ -21,7 +21,7 @@ public class InternalMatchStateEvaluation implements InternalMatchState {
         String matchString = "";
 
         internalMatch.getCurrentElement().setOldPos(internalMatch.getPatternMatch().getPos());
-        internalMatch.getCurrentElement().setSubString(internalMatch.getInternalResult().getSubString());
+        internalMatch.getCurrentElement().setSubString((String)internalMatch.getInternalResult().getResult());  //.getSubString());
                 //
         if(!internalMatch.getCurrentElement().getClass().equals(PatternOperatorAlternate.class)) { //not Alternate 
         if(internalMatch.getDefinition().hasPrevious()) { //not first element

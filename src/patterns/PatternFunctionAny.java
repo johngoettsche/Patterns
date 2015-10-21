@@ -19,12 +19,12 @@ public class PatternFunctionAny extends PatternFunction{
         MatchResult result = new MatchResult();
         int stop = beginCSet(subject, pos, getArgument(0).getCharSet());
         if(stop > 0){
-            result.setSubString(String.valueOf(subject.charAt(stop)));
+            result.setResult(String.valueOf(subject.charAt(stop))); //.setSubString(String.valueOf(subject.charAt(stop)));
             result.setPos(stop);
             result.setSuccess(true);
         } else {
             result.setSuccess(false);
-            result.setSubString("");
+            result.setResult(""); //.setSubString("");
             result.setPos(pos);
         }
         return result;

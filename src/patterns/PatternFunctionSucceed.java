@@ -20,7 +20,7 @@ public class PatternFunctionSucceed extends PatternFunction {
     public MatchResult evaluate(String subject, int pos){
         MatchResult result = new MatchResult();
         result.setSuccess(true);
-        result.setSubString("");
+        result.setResult(""); //.setSubString("");
         result.setPos(pos);
         return result;
     }

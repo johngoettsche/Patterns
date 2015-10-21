@@ -22,9 +22,9 @@ public class PatternStructureArb extends PatternStructure {
         int start = pos;
         MatchResult matchResult = nextMatch(subject, pos);
         if(matchResult.isSuccess()) {
-            matchResult.setSubString(subject.substring(start, matchResult.getPos()));
+            matchResult.setResult(subject.substring(start, matchResult.getPos())); //.setSubString(subject.substring(start, matchResult.getPos()));
         } else {
-            matchResult.setSubString("");
+            matchResult.setResult(""); //.setSubString("");
         }
         return matchResult;
     }  

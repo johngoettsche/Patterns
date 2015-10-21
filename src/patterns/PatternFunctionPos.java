@@ -19,7 +19,7 @@ public class PatternFunctionPos extends PatternFunction{
         int oldPos = pos;
         int newPos = -1;
         if(getArgument(0).getClass().equals(PatternTypeInteger.class)){
-            newPos = subject.length() - getArgument(0).evaluate(subject, pos).getIntValue();
+            newPos = subject.length() - (int)getArgument(0).evaluate(subject, pos).getResult(); //.getIntValue();
         } else if(getArgument(0).equals(PatternLabel.Len)) {
             // evaluate internal function
         } else {
@@ -27,12 +27,12 @@ public class PatternFunctionPos extends PatternFunction{
         }
         MatchResult result = new MatchResult();
         if(newPos >= 0 && subject.length() >= newPos && newPos > pos){
-            result.setSubString("");
+            result.setResult(""); //.setSubString("");
             result.setPos(newPos);
             result.setSuccess(true);
         } else {
             result.setSuccess(false);
-            result.setSubString("");
+            result.setResult(""); //.setSubString("");
             result.setPos(pos);
         }
         return result;

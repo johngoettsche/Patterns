@@ -18,7 +18,7 @@ public class PatternStructureFence extends PatternStructure {
     public MatchResult evaluate(String subject, int pos){
         MatchResult matchResult = new MatchResult();
         matchResult.setPos(pos);
-        matchResult.setSubString("");
+        matchResult.setResult(""); //.setSubString("");
         matchResult.setSuccess(true);
         return matchResult;
     }

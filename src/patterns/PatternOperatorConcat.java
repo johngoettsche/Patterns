@@ -20,7 +20,7 @@ public class PatternOperatorConcat extends PatternOperator {
     public MatchResult evaluate(String subject, int pos){
         MatchResult result = new MatchResult();
         result.setPos(pos);
-        result.setSubString("");
+        result.setResult(""); //.setSubString("");
         result.setSuccess(true);
         return result;
     }

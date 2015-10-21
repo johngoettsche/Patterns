@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * @author John
+ * @author John H. Goettsche
  */
 public class PatternTypeCSet extends PatternType{
     public PatternTypeCSet(String st) {
@@ -22,8 +22,8 @@ public class PatternTypeCSet extends PatternType{
     public MatchResult evaluate(String subject, int pos){
         MatchResult result = new MatchResult(pos, getCharSet());
         result.setPos(pos);
-        result.setSubString("");
-        result.setStringValue(getCharSet());
+        //result.setResult(""); //.setSubString("");
+        result.setResult(getCharSet()); //.setStringValue(getCharSet());
         return result;
     }
 }

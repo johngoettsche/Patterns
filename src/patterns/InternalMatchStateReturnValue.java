@@ -29,8 +29,9 @@ public class InternalMatchStateReturnValue implements InternalMatchState{
     @Override
     public void noElements() throws PatternException {
         if(internalMatch.getInternalResult().isSuccess()) {
-            String newSubString = internalMatch.getPatternMatch().getMatchResult().getSubString() + internalMatch.getInternalResult().getSubString();
-            internalMatch.getPatternMatch().getMatchResult().setSubString(newSubString);
+            String newSubString = (String)internalMatch.getPatternMatch().getMatchResult().getResult() + //.getSubString() + 
+                    (String)internalMatch.getInternalResult().getResult(); //.getSubString();
+            internalMatch.getPatternMatch().getMatchResult().setResult(newSubString); //.setSubString(newSubString);
             internalMatch.getPatternMatch().getMatchResult().setPos(internalMatch.getInternalResult().getPos());
             internalMatch.getPatternMatch().getMatchResult().setSuccess(true);
         } else {

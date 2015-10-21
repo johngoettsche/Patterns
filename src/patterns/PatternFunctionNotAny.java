@@ -20,12 +20,12 @@ public class PatternFunctionNotAny extends PatternFunction {
         MatchResult result = new MatchResult();
         int stop = endCSet(subject, pos, getArgument(0).getCharSet());
         if(stop <= subject.length()){
-            result.setSubString(String.valueOf(subject.charAt(stop)));
+            result.setResult(String.valueOf(subject.charAt(stop))); //.setSubString(String.valueOf(subject.charAt(stop)));
             result.setPos(stop);
             result.setSuccess(true);
         } else {
             result.setSuccess(false);
-            result.setSubString("");
+            result.setResult(""); //.setSubString("");
             result.setPos(pos);
         }
         return result;

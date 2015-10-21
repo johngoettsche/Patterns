@@ -20,12 +20,12 @@ public class PatternFunctionBreak extends PatternFunction {
         int stop;
         stop = beginCSet(subject, pos, getArgument(0).getCharSet());
         if(stop <= subject.length()) {
-            result.setSubString(subject.substring(pos, stop));
+            result.setResult(subject.substring(pos, stop)); //.setSubString(subject.substring(pos, stop));
             result.setPos(stop);
             result.setSuccess(true);
         } else {
             result.setSuccess(false);
-            result.setSubString("");
+            result.setResult(""); //.setSubString("");
             result.setPos(pos);
         }
         return result;

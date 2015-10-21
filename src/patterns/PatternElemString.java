@@ -24,12 +24,12 @@ public class PatternElemString extends PatternElem {
         if(subString.startsWith(getCharSet())) {
             int start = subject.indexOf(getCharSet());
             int stop = start + getCharSet().length();
-            result.setSubString(getCharSet());
+            result.setResult(getCharSet()); //setSubString(getCharSet());
             result.setPos(stop);
             result.setSuccess(true);
         } else {
             result.setSuccess(false);
-            result.setSubString("");
+            result.setResult(""); //setSubString("");
             result.setPos(pos);
         }
         return result;

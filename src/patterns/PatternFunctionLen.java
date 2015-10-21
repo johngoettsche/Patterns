@@ -25,18 +25,18 @@ public class PatternFunctionLen extends PatternFunction {
         int oldPos = pos;
         int length = 0;
         if(getArgument(0).getClass().equals(PatternTypeInteger.class)){
-            length = getArgument(0).evaluate(subject, pos).getIntValue();
+            length = (int)getArgument(0).evaluate(subject, pos).getResult(); //.getIntValue();
         } else {
             System.out.println("argument must reduce to an integer.");
         }
         MatchResult result = new MatchResult();
         if(subject.length() >= pos + length){
-            result.setSubString(subject.substring(pos, (pos + length)));
+            result.setResult(subject.substring(pos, (pos + length))); //.setSubString(subject.substring(pos, (pos + length)));
             result.setPos(pos + length);
             result.setSuccess(true);
         } else {
             result.setSuccess(false);
-            result.setSubString("");
+            result.setResult(""); //.setSubString("");
             result.setPos(pos);
         }
         return result;

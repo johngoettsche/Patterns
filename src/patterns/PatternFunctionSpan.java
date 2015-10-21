@@ -20,12 +20,12 @@ public class PatternFunctionSpan extends PatternFunction {
         int stop;
         if(atCSet(subject, pos, getArgument(0).getCharSet())){
             stop = endCSet(subject, pos, getArgument(0).getCharSet());
-            result.setSubString(subject.substring(pos, stop));
+            result.setResult(subject.substring(pos, stop)); //.setSubString(subject.substring(pos, stop));
             result.setPos(stop);
             result.setSuccess(true);
         } else {
             result.setSuccess(false);
-            result.setSubString("");
+            result.setResult(""); //.setSubString("");
             result.setPos(pos);
         }
         return result;

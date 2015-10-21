@@ -23,8 +23,8 @@ public class PatternTypeInteger extends PatternType{
     public MatchResult evaluate(String subject, int pos){
         MatchResult result = new MatchResult(pos, getCharSet());
         result.setPos(pos);
-        result.setSubString("");
-        result.setIntValue(Integer.parseInt(getCharSet()));
+        //result.setResult(""); //.setSubString("");
+        result.setResult(Integer.parseInt(getCharSet())); //.setIntValue(Integer.parseInt(getCharSet()));
         return result;
     }
 }

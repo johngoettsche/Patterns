@@ -17,7 +17,7 @@ public class PatternFunctionUser extends PatternFunction{
     public MatchResult evaluate(String subject, int pos){
         MatchResult result = new MatchResult();
         result.setPos(0);
-        result.setSubString("");
+        result.setResult(""); //.setSubString("");
         
         return result;
     }

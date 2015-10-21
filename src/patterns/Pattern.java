@@ -19,16 +19,18 @@ public class Pattern {
     //List<PatternElem> definition = new ArrayList();
     PatternElem nullElem = new PatternElemNull();
     boolean anchored;
+    PatternVariableMap patternVariableMap;
     
     CSets csets = new CSets();
     
     public Pattern(){
-        
+        patternVariableMap = PatternVariableMap.getInstance();
     }
     
-    public Pattern(String p){
+    public Pattern(String pat){
+        patternVariableMap = PatternVariableMap.getInstance();
         try {
-            patternDefinition(p);
+            patternDefinition(pat);
         } catch(PatternException ex) {
             System.out.println(ex);
         }
@@ -109,8 +111,8 @@ public class Pattern {
                     System.out.println("Variable");
                     stop = endLetters(pattern, pos);
                     token = pattern.substring(pos, stop);
-                    
-                    
+                    //patternVariableMap.putPatternVariable(token, null);
+                    pat = new PatternElemVariable(token);
                     //int test = Integer.valueOf(token);
                     //System.out.println(test);
                     pos = stop + 1;
@@ -224,7 +226,7 @@ public class Pattern {
         return patternMatch.getMatchResult().getSubString();*/
         anchored = false;
         try {
-            result = patternMatch(subject, pos).getSubString();
+            result = (String)patternMatch(subject, pos).getResult();  // getSubString();
         } catch (PatternException ex){
             System.out.println(ex);
         }
@@ -288,7 +290,7 @@ public class Pattern {
                 } else { //alternation.
                     if(internalResult.isSuccess()){
                         matchResult.setSuccess(true);
-                        matchResult.setSubString(matchString);
+                        matchResult.setResult(matchString); //setSubString(matchString);
                         matchResult.setPos(internalResult.getPos());  
                         break;
                     }
@@ -301,7 +303,7 @@ public class Pattern {
                 
                 if(internalResult.isSuccess()) {
                     //System.out.println("Internal result is a success.");
-                    matchString += internalResult.getSubString();
+                    matchString += (String)internalResult.getResult(); //getSubString();
                     System.out.println("\tmatchString: " + matchString);
                     pos = internalResult.getPos();
                 } else {
@@ -317,13 +319,13 @@ public class Pattern {
             //System.out.println("is success: " + internalResult.isSuccess());
             if(internalResult.isSuccess()){//successful internal match
                 System.out.println("\tmatchString on success: " + matchString);
-                matchResult.setSubString(matchString);
+                matchResult.setResult(matchString); //setSubString(matchString);
                 matchResult.setPos(internalResult.getPos());  
                 matchResult.setSuccess(true);
                 pos = matchResult.getPos();
                 continue;
             } else if(anchored) {
-                matchResult.setSubString("");
+                matchResult.setResult(""); //setSubString("");
                 matchResult.setPos(oldPos);
                 matchResult.setSuccess(false);
                 break;

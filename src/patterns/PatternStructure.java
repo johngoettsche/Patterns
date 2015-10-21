@@ -31,7 +31,7 @@ public abstract class PatternStructure extends PatternElem {
             endPos = pos;
             matchResult = definition.getNextNext().evaluate(subject, pos);
             if(matchResult.isSuccess()){
-                matchResult.setSubString(subject.substring(start, endPos));
+                matchResult.setResult(subject.substring(start, endPos)); //.setSubString(subject.substring(start, endPos));
                 matchResult.setPos(endPos);
                 return matchResult;
             }

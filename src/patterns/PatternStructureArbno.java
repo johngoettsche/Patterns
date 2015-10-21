@@ -33,7 +33,7 @@ public class PatternStructureArbno extends PatternStructure{
         System.out.println(internalMatch.isSuccess());
         System.out.println(nextMatch.isSuccess());
         while(internalMatch.isSuccess() && nextMatch.isSuccess()) {
-            matchResult.setSubString(subject.substring(start, pos));
+            matchResult.setResult(subject.substring(start, pos)); //.setSubString(subject.substring(start, pos));
             matchResult.setPos(internalMatch.getPos());
             internalMatch = patternArgument.match(subject, pos);
             pos++;
