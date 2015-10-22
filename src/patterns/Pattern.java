@@ -16,11 +16,9 @@ import java.lang.reflect.Field;
 public class Pattern {
     PatternDefinitionIterator definition = new PatternDefinitionIterator();
     PatternMatch patternMatch;
-    //List<PatternElem> definition = new ArrayList();
     PatternElem nullElem = new PatternElemNull();
     boolean anchored;
     PatternVariableMap patternVariableMap;
-    
     CSets csets = new CSets();
     
     public Pattern(){
@@ -45,6 +43,9 @@ public class Pattern {
     }
     
     private void patternDefinition(String pattern) throws PatternException{
+        /**
+         * performs the lexical analysis of the pattern definition provided
+         */
         PatternElem pat = nullElem;
         int intValue;
         String stringValue;
@@ -57,8 +58,7 @@ public class Pattern {
         int strL, strR;
         int oldPos;
         String args;
-        
-        
+
         //clear beginning whitespace
         while(pattern.charAt(pos) == ' ' && pos < pattern.length()) pos++;
         while(pos < pattern.length()){
@@ -93,6 +93,22 @@ public class Pattern {
                 System.out.println("Concatenation Operator");
                 pat = new PatternOperatorConcat();
                 pos++;
+            } else if(pattern.charAt(pos + 1) == '>') { // assignments
+                if(pattern.charAt(pos) == '-') {
+                    System.out.println("Immediate Assignment");
+                    pat = new PatternOperatorImmediateAssignment(definition);
+                    pos = pos + 2;
+                } else if(pattern.charAt(pos) == '=') {
+                    System.out.println("Conditional Assignment");
+                    pat = new PatternOperatorConditionalAssignment(definition);
+                    pos = pos + 2;
+                } else if(pattern.charAt(pos) == '.') {
+                    System.out.println("Cursor Assignment");
+                    pat = new PatternOperatorCursorAssignment(definition);
+                    pos = pos + 2;
+                } else {
+                    throw new PatternException("Unrecognized Assignment Operator.");
+                }
             } else if(memberOfCSet(pattern.charAt(pos), csets.letters)) {
                 if(braceL > pos) {
                     token = pattern.substring(pos, braceL);
@@ -111,10 +127,7 @@ public class Pattern {
                     System.out.println("Variable");
                     stop = endLetters(pattern, pos);
                     token = pattern.substring(pos, stop);
-                    //patternVariableMap.putPatternVariable(token, null);
                     pat = new PatternElemVariable(token);
-                    //int test = Integer.valueOf(token);
-                    //System.out.println(test);
                     pos = stop + 1;
                 }
             } else {
@@ -248,12 +261,9 @@ public class Pattern {
     private MatchResult patternMatch(String subject, int pos) throws PatternException {
         int oldPos = pos;
         String matchString = "";
-        MatchResult matchResult = new MatchResult(pos, matchString);
-        matchResult.setSuccess(false);
-        MatchResult internalResult = new MatchResult(pos, matchString);
-        internalResult.setSuccess(false);
-        MatchResult backResult = new MatchResult(pos, matchString);
-        backResult.setSuccess(true);
+        MatchResult matchResult = new MatchResult(pos, matchString, false);
+        MatchResult internalResult = new MatchResult(pos, matchString, false);
+        MatchResult backResult = new MatchResult(pos, matchString, true);
         //definition.start(); 
         while(!matchResult.isSuccess() && pos <= subject.length()) { // no match and chars left
             definition.start();   

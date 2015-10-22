@@ -26,6 +26,7 @@ public class PatternStructureArb extends PatternStructure {
         } else {
             matchResult.setResult(""); //.setSubString("");
         }
-        return matchResult;
+        this.setResult(matchResult);
+        return this.getResult();
     }  
 }

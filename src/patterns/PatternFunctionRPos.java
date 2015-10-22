@@ -7,7 +7,7 @@ package patterns;
 
 /**
  *
- * @author John
+ * @author John H. Goettsche
  */
 public class PatternFunctionRPos extends PatternFunction{
     public PatternFunctionRPos(String args){
@@ -16,7 +16,6 @@ public class PatternFunctionRPos extends PatternFunction{
     }
     
     public MatchResult evaluate(String subject, int pos){
-        int oldPos = pos;
         int newPos = -1;
         if(getArgument(0).getClass().equals(PatternTypeInteger.class)){
             newPos = subject.length() - subject.length() - (int)getArgument(0).evaluate(subject, pos).getResult(); //.getIntValue();
@@ -25,16 +24,11 @@ public class PatternFunctionRPos extends PatternFunction{
         } else {
             System.out.println("argument must reduce to an integer.");
         }
-        MatchResult result = new MatchResult();
         if(newPos >= 0 && subject.length() >= newPos && newPos > pos){
-            result.setResult(""); //.setSubString("");
-            result.setPos(newPos);
-            result.setSuccess(true);
+            this.setResult(new MatchResult(newPos, "", true));
         } else {
-            result.setSuccess(false);
-            result.setResult(""); //.setSubString("");
-            result.setPos(pos);
+            this.setResult(new MatchResult(pos, "", false));
         }
-        return result;
+        return this.getResult();
     }
 }

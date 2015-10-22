@@ -18,10 +18,7 @@ public class PatternFunctionSucceed extends PatternFunction {
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult result = new MatchResult();
-        result.setSuccess(true);
-        result.setResult(""); //.setSubString("");
-        result.setPos(pos);
-        return result;
+        this.setResult(new MatchResult(pos, "", true));
+        return this.getResult();
     }
 }

@@ -21,8 +21,7 @@ public class PatternElemPattern extends PatternElem {
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult matchResult = new MatchResult(pos, "");
-        matchResult = pattern.match(subject, pos);
-        return matchResult;
+        this.setResult(pattern.match(subject, pos));
+        return this.getResult();
     } 
 }

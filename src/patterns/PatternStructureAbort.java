@@ -16,8 +16,7 @@ public class PatternStructureAbort extends PatternStructure {
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult matchResult = new MatchResult(0, "");
-        matchResult.setPos(-1);
-        return matchResult;
+        this.setResult(new MatchResult(-1, "", false));
+        return this.getResult();
     }    
 }

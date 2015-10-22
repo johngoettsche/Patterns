@@ -16,17 +16,13 @@ public class PatternFunctionAny extends PatternFunction{
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult result = new MatchResult();
         int stop = beginCSet(subject, pos, getArgument(0).getCharSet());
         if(stop > 0){
-            result.setResult(String.valueOf(subject.charAt(stop))); //.setSubString(String.valueOf(subject.charAt(stop)));
-            result.setPos(stop);
-            result.setSuccess(true);
+            this.setResult(new MatchResult(stop, String.valueOf(subject.charAt(
+                    stop)), true));
         } else {
-            result.setSuccess(false);
-            result.setResult(""); //.setSubString("");
-            result.setPos(pos);
+            this.setResult(new MatchResult(pos, "", false));
         }
-        return result;
+        return this.getResult();
     }
 }

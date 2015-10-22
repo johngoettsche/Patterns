@@ -16,18 +16,13 @@ public class PatternFunctionSpan extends PatternFunction {
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult result = new MatchResult();
         int stop;
         if(atCSet(subject, pos, getArgument(0).getCharSet())){
             stop = endCSet(subject, pos, getArgument(0).getCharSet());
-            result.setResult(subject.substring(pos, stop)); //.setSubString(subject.substring(pos, stop));
-            result.setPos(stop);
-            result.setSuccess(true);
+            this.setResult(new MatchResult(stop, subject.substring(pos, stop), true));
         } else {
-            result.setSuccess(false);
-            result.setResult(""); //.setSubString("");
-            result.setPos(pos);
+            this.setResult(new MatchResult(pos, "", false));
         }
-        return result;
+        return this.getResult();
     }
 }

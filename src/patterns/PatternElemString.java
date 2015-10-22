@@ -19,20 +19,15 @@ public class PatternElemString extends PatternElem {
     }
     
     public MatchResult evaluate(String subject, int pos) {
-        MatchResult result = new MatchResult();
         String subString = subject.substring(pos);
         if(subString.startsWith(getCharSet())) {
             int start = subject.indexOf(getCharSet());
             int stop = start + getCharSet().length();
-            result.setResult(getCharSet()); //setSubString(getCharSet());
-            result.setPos(stop);
-            result.setSuccess(true);
+            this.setResult(new MatchResult(stop, getCharSet(), true));
         } else {
-            result.setSuccess(false);
-            result.setResult(""); //setSubString("");
-            result.setPos(pos);
+            this.setResult(new MatchResult(pos, "", false));
         }
-        return result;
+        return this.getResult();
     }
     
 }

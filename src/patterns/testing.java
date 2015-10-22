@@ -18,10 +18,10 @@ public class testing {
     Object myObject;
     
     public static void main(String[] args) {
-        //PatternMatch patternMatch = new PatternMatch();
-        int start = 5;
+        PatternVariableMap patternVariableMap = PatternVariableMap.getInstance();
+        patternVariableMap.setPatternVariable("start", 5);
 
-        Pattern testPat = new Pattern("start");
-        System.out.println(testPat.match("a"));
+        Pattern testPat = new Pattern("Len(start)");
+        System.out.println(testPat.match("abcdefghijklmnop"));
     }
 }

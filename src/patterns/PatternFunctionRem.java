@@ -16,18 +16,13 @@ public class PatternFunctionRem extends PatternFunction{
     }
     
     public MatchResult evaluate(String subject, int pos){
-        int oldPos = pos;
         int newPos = subject.length();        
-        MatchResult result = new MatchResult();
         if(newPos >= 0 && newPos > pos){
-            result.setResult(subject.substring(pos, newPos)); //.setSubString(subject.substring(pos, newPos));
-            result.setPos(newPos);
-            result.setSuccess(true);
+            this.setResult(new MatchResult(newPos, subject.substring(pos,
+                    newPos), true));
         } else {
-            result.setSuccess(false);
-            result.setResult(""); //.setSubString("");
-            result.setPos(pos);
+            this.setResult(new MatchResult(pos, "", false));
         }
-        return result;
+        return this.getResult();
     }
 }

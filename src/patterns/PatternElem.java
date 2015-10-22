@@ -22,6 +22,7 @@ public abstract class PatternElem {
     private String charSet;
     private int oldPos;
     private String subString;
+    private MatchResult result;
     
     public abstract MatchResult evaluate(String subject, int pos);
     
@@ -31,6 +32,10 @@ public abstract class PatternElem {
     
     public Class getPatternType(){
         return element.getClass();
+    }
+
+    public void setResult(MatchResult result) {
+        this.result = result;
     }
 
     public void setElement(PatternType element) {
@@ -59,6 +64,10 @@ public abstract class PatternElem {
     
     public PatternType getElement() {
         return element;
+    }
+
+    public MatchResult getResult() {
+        return result;
     }
 
     public String getElementName() {

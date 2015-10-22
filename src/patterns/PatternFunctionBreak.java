@@ -16,18 +16,13 @@ public class PatternFunctionBreak extends PatternFunction {
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult result = new MatchResult();
         int stop;
         stop = beginCSet(subject, pos, getArgument(0).getCharSet());
         if(stop <= subject.length()) {
-            result.setResult(subject.substring(pos, stop)); //.setSubString(subject.substring(pos, stop));
-            result.setPos(stop);
-            result.setSuccess(true);
+            this.setResult(new MatchResult(stop, subject.substring(pos, stop), true));
         } else {
-            result.setSuccess(false);
-            result.setResult(""); //.setSubString("");
-            result.setPos(pos);
+            this.setResult(new MatchResult(pos, "", false));
         }
-        return result;
+        return this.getResult();
     }
 }

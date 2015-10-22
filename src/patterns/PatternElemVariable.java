@@ -12,11 +12,19 @@ import java.util.ArrayList;
  * @author John H. Goettsche
  */
 public class PatternElemVariable extends PatternElem {
-    PatternVariableMap patternVariableMap;
+    private PatternVariableMap patternVariableMap;
+    private Object variable;
     
     public PatternElemVariable(String st) {
         patternVariableMap = PatternVariableMap.getInstance();
-        patternVariableMap.setPatternVariable(st, null);
+        if(!patternVariableMap.variableExists(st)) {
+            try {
+                patternVariableMap.putPatternVariable(st, null);
+            } catch(PatternException ex){
+                System.out.println(ex);
+            }
+        }
+        variable = patternVariableMap.getPatternVariable(st);
         setCharSet(st);
         setArguments(new ArrayList());
         setElementName("Pattern Elem Variable " + st);
@@ -30,19 +38,18 @@ public class PatternElemVariable extends PatternElem {
          * pattern variable.
          */
         
-        MatchResult result = new MatchResult();
+        this.setResult(new MatchResult());
         Object value = patternVariableMap.getPatternVariable(this.getCharSet());
-        result.setResult(value);
-        /*if(value.getClass().equals(Integer.class)) {
-            result.setIntValue((int)value);
-        } else if(value.getClass().equals(String.class)) {
-            result.setStringValue((String)value);
-        }*/
-        result.setSuccess(true);
-        return result;
+        this.setResult(new MatchResult(pos, value, true));
+        return this.getResult();
+    }
+
+    public Object getVariable() {
+        return variable;
     }
     
     public void setVariable(Object val) {
         patternVariableMap.setPatternVariable(this.getCharSet(), val);
+        variable = patternVariableMap.getPatternVariable(this.getCharSet());
     }
 }

@@ -23,15 +23,11 @@ public class PatternStructureArbno extends PatternStructure{
     
     public MatchResult evaluate(String subject, int pos){
         int start;
-        MatchResult matchResult = new MatchResult(pos, "");
-        matchResult.setSuccess(false);
-        MatchResult internalMatch = new MatchResult(pos, "");
-        internalMatch.setSuccess(true);
+        MatchResult matchResult = new MatchResult(pos, "", false);
+        MatchResult internalMatch = new MatchResult(pos, "", true);
         MatchResult nextMatch;
         nextMatch = nextMatch(subject, pos);
         start = pos;
-        System.out.println(internalMatch.isSuccess());
-        System.out.println(nextMatch.isSuccess());
         while(internalMatch.isSuccess() && nextMatch.isSuccess()) {
             matchResult.setResult(subject.substring(start, pos)); //.setSubString(subject.substring(start, pos));
             matchResult.setPos(internalMatch.getPos());
@@ -40,6 +36,7 @@ public class PatternStructureArbno extends PatternStructure{
             nextMatch = nextMatch(subject, pos);
         } 
         matchResult.setSuccess(true);
-        return matchResult;
+        this.setResult(matchResult);
+        return this.getResult();
     }  
 }

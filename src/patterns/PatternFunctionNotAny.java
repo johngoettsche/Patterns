@@ -17,17 +17,13 @@ public class PatternFunctionNotAny extends PatternFunction {
     
     @Override
     public MatchResult evaluate(String subject, int pos){
-        MatchResult result = new MatchResult();
         int stop = endCSet(subject, pos, getArgument(0).getCharSet());
         if(stop <= subject.length()){
-            result.setResult(String.valueOf(subject.charAt(stop))); //.setSubString(String.valueOf(subject.charAt(stop)));
-            result.setPos(stop);
-            result.setSuccess(true);
+            this.setResult(new MatchResult(stop, String.valueOf(subject.charAt(
+                    stop)), true));
         } else {
-            result.setSuccess(false);
-            result.setResult(""); //.setSubString("");
-            result.setPos(pos);
+            this.setResult(new MatchResult(pos, "", false));
         }
-        return result;
+        return this.getResult();
     }
 }

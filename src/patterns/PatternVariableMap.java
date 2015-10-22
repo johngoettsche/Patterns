@@ -55,4 +55,8 @@ public class PatternVariableMap {
     public Object getPatternVariable(String var){
         return patternVariableMap.get(var);
     }
+    
+    public boolean variableExists(String var) {
+        return patternVariableMap.containsKey(var); 
+    }
 }

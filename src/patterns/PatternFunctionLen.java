@@ -29,16 +29,12 @@ public class PatternFunctionLen extends PatternFunction {
         } else {
             System.out.println("argument must reduce to an integer.");
         }
-        MatchResult result = new MatchResult();
         if(subject.length() >= pos + length){
-            result.setResult(subject.substring(pos, (pos + length))); //.setSubString(subject.substring(pos, (pos + length)));
-            result.setPos(pos + length);
-            result.setSuccess(true);
+            this.setResult(new MatchResult(pos + length, subject.substring(
+                    pos, pos + length), true));
         } else {
-            result.setSuccess(false);
-            result.setResult(""); //.setSubString("");
-            result.setPos(pos);
+            this.setResult(new MatchResult(pos, "", false));
         }
-        return result;
+        return this.getResult();
     }
 }

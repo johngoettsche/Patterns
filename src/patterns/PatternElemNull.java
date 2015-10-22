@@ -19,7 +19,7 @@ public class PatternElemNull extends PatternElem{
     }
 
     public MatchResult evaluate(String subject, int pos){
-        MatchResult matchResult = new MatchResult(0, "");
-        return matchResult;
+        this.setResult(new MatchResult(0, "", false));
+        return this.getResult();
     }
 }

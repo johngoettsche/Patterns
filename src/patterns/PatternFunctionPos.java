@@ -25,16 +25,11 @@ public class PatternFunctionPos extends PatternFunction{
         } else {
             System.out.println("argument must reduce to an integer.");
         }
-        MatchResult result = new MatchResult();
         if(newPos >= 0 && subject.length() >= newPos && newPos > pos){
-            result.setResult(""); //.setSubString("");
-            result.setPos(newPos);
-            result.setSuccess(true);
+            this.setResult(new MatchResult(newPos, "", true));
         } else {
-            result.setSuccess(false);
-            result.setResult(""); //.setSubString("");
-            result.setPos(pos);
+            this.setResult(new MatchResult(pos, "", false));
         }
-        return result;
+        return this.getResult();
     }
 }

@@ -18,10 +18,7 @@ public class PatternFunctionFail extends PatternFunction {
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult result = new MatchResult();
-        result.setSuccess(false);
-        result.setResult(""); //.setSubString("");
-        result.setPos(pos);
-        return result;
+        this.setResult(new MatchResult(pos, "", false));
+        return this.getResult();
     }
 }

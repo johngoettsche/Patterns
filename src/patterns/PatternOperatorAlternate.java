@@ -19,10 +19,8 @@ public class PatternOperatorAlternate extends PatternOperator{
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult result = new MatchResult();
-        result.setPos(pos);
-        result.setResult(""); //.setSubString("");
+        this.setResult(new MatchResult(pos, "", this.getDefinition().getPrevious().getResult().isSuccess()));
         
-        return result;
+        return this.getResult();
     }
 }

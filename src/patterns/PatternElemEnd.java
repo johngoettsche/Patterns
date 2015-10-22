@@ -7,7 +7,7 @@ package patterns;
 
 /**
  *
- * @author John
+ * @author John H. Goettsche
  */
 public class PatternElemEnd extends PatternElem {
     public PatternElemEnd(){
@@ -15,7 +15,7 @@ public class PatternElemEnd extends PatternElem {
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult matchResult = new MatchResult(0, "");
-        return matchResult;
+        this.setResult(new MatchResult(0, "", false));
+        return this.getResult();
     }    
 }

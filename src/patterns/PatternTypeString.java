@@ -22,11 +22,8 @@ public class PatternTypeString extends PatternType{
     }
     
     public MatchResult evaluate(String subject, int pos){
-        MatchResult result = new MatchResult(pos, getCharSet());
-        result.setPos(pos);
-        //result.setResult(""); //.setSubString("");
-        result.setResult(getCharSet()); //.setStringValue(getCharSet());
-        return result;
+        this.setResult(new MatchResult(pos, getCharSet(), true));
+        return this.getResult();
     }
 
 }
