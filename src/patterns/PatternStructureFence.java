@@ -11,7 +11,11 @@ package patterns;
  */
 public class PatternStructureFence extends PatternStructure {
     public PatternStructureFence(String args){
-        setArguments(defineFuncArguments(args));
+        try {
+            setArguments(defineFuncArguments(args));
+        } catch (PatternException ex) {
+            System.out.println(ex);
+        }
         setElementName("Pattern Structure Fence()");
     }
     

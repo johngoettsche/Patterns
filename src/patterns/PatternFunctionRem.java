@@ -11,7 +11,11 @@ package patterns;
  */
 public class PatternFunctionRem extends PatternFunction{
     public PatternFunctionRem(String args){
-        setArguments(defineFuncArguments(args));
+        try {
+            setArguments(defineFuncArguments(args));
+        } catch (PatternException ex) {
+            System.out.println(ex);
+        }
         setElementName("Pattern Function Rem()");
     }
     

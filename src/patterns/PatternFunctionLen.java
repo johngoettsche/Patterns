@@ -15,7 +15,11 @@ package patterns;
 public class PatternFunctionLen extends PatternFunction {
     
     public PatternFunctionLen(String args){
-        setArguments(defineFuncArguments(args));
+        try {
+            setArguments(defineFuncArguments(args));
+        } catch (PatternException ex) {
+            System.out.println(ex);
+        }
         setElementName("Pattern Function Len()");
     }
     

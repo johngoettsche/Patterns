@@ -16,7 +16,11 @@ public class PatternStructureArbno extends PatternStructure{
     
     public PatternStructureArbno(PatternDefinitionIterator def, String args){
         setDefinition(def);
-        setArguments(defineFuncArguments(args));
+        try {
+            setArguments(defineFuncArguments(args));
+        } catch (PatternException ex) {
+            System.out.println(ex);
+        }
         setElementName("Pattern Structure Arbno()");
         patternArgument = new Pattern(args);
     }

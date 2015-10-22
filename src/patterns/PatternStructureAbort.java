@@ -11,7 +11,11 @@ package patterns;
  */
 public class PatternStructureAbort extends PatternStructure {
     public PatternStructureAbort(String args){
-        setArguments(defineFuncArguments(args));
+        try {
+            setArguments(defineFuncArguments(args));
+        } catch (PatternException ex) {
+            System.out.println(ex);
+        }
         setElementName("Pattern Structure Abort()");
     }
     

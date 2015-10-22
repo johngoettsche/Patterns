@@ -11,7 +11,11 @@ package patterns;
  */
 public class PatternFunctionBreak extends PatternFunction {
     public PatternFunctionBreak(String args){
-        setArguments(defineFuncArguments(args));
+        try {
+            setArguments(defineFuncArguments(args));
+        } catch (PatternException ex) {
+            System.out.println(ex);
+        }
         setElementName("Pattern Function Break()");
     }
     

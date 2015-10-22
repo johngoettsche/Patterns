@@ -13,13 +13,14 @@ import java.lang.reflect.Field;
  * @author John H. Goettsche
  */
 
-public class Pattern {
+public class Pattern extends PatternGlobals{
     PatternDefinitionIterator definition = new PatternDefinitionIterator();
     PatternMatch patternMatch;
     PatternElem nullElem = new PatternElemNull();
     boolean anchored;
     PatternVariableMap patternVariableMap;
     CSets csets = new CSets();
+    //private PatternGlobals patternGlobals = new PatternGlobals();
     
     public Pattern(){
         patternVariableMap = PatternVariableMap.getInstance();
@@ -140,23 +141,7 @@ public class Pattern {
             definition.add(pat);
         }//end while
     }
-        
-    private int endLetters(String subject, int pos) {
-        for(int i = pos; i < subject.length(); i++){
-            if(!memberOfCSet(subject.charAt(i), csets.letters)) return i;
-        }
-        return subject.length();
-    }
-    
-    private boolean memberOfCSet(char c, char[] cset){
-        for(int i = 0; i < cset.length; i++){
-            if(c == cset[i]) return true;
-        }
-        return false;
-    }
-    
-    
-    
+
     private PatternElem makePatternFunction(String token, String pattern, int braceL, int braceR) throws PatternException{
         PatternElem pat;
         PatternLabel patternLabel;
@@ -208,27 +193,6 @@ public class Pattern {
                 pat = new PatternElemNull();
         } 
         return pat;
-    }
-    
-    public int findClosingSymbol(String subject, String startingSymbol, int left){
-        String closingSymbol = "";
-        //System.out.println(subject + " : " + startingSymbol + " : " + left);
-        if(startingSymbol.equals("'") || startingSymbol.equals("`")) closingSymbol = startingSymbol;
-        else if(startingSymbol.equals("(")) closingSymbol = ")";
-        else if(startingSymbol.equals("[")) closingSymbol = "]";
-        else if(startingSymbol.equals("{")) closingSymbol = "}";
-        //System.out.println("Closing Symbol: " + closingSymbol);
-        int count = 1;
-        for(int pos = left + 1; pos < subject.length(); pos++){
-            if(String.valueOf(subject.charAt(pos)).equals(closingSymbol)) count--;
-            else if(String.valueOf(subject.charAt(pos)).equals(startingSymbol)) count++;
-            //System.out.println(count);
-            if(count == 0) {
-                //System.out.println(left + " : " + pos);
-                return pos;
-            }
-        }
-        return -1;
     }
     
     public String match(String subject){

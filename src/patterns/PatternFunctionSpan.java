@@ -11,7 +11,11 @@ package patterns;
  */
 public class PatternFunctionSpan extends PatternFunction {
     public PatternFunctionSpan(String args){
-        setArguments(defineFuncArguments(args));
+        try {
+            setArguments(defineFuncArguments(args));
+        } catch (PatternException ex) {
+            System.out.println(ex);
+        }
         setElementName("Pattern Function Span()");
     }
     

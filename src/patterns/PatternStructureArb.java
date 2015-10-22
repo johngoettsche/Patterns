@@ -14,7 +14,11 @@ import java.util.List;
 public class PatternStructureArb extends PatternStructure {    
     public PatternStructureArb(PatternDefinitionIterator def, String args){
         setDefinition(def);
-        setArguments(defineFuncArguments(args));
+        try {
+            setArguments(defineFuncArguments(args));
+        } catch (PatternException ex) {
+            System.out.println(ex);
+        }
         setElementName("Pattern Structure Arb()");
     }
     

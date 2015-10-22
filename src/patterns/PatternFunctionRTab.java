@@ -11,7 +11,11 @@ package patterns;
  */
 public class PatternFunctionRTab extends PatternFunction{
     public PatternFunctionRTab(String args){
-        setArguments(defineFuncArguments(args));
+        try {
+            setArguments(defineFuncArguments(args));
+        } catch (PatternException ex) {
+            System.out.println(ex);
+        }
         setElementName("Pattern Function RTab()");
     }
     

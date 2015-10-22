@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
  * @author John H. Goettsche
  */
 
-public abstract class PatternElem {
+public abstract class PatternElem extends PatternGlobals {
     private PatternType element;
     private String elementName;
     private List<PatternElem> arguments;    
@@ -23,6 +23,9 @@ public abstract class PatternElem {
     private int oldPos;
     private String subString;
     private MatchResult result;
+
+    private CSets csets = new CSets();
+    private PatternGlobals patternGlobals = new PatternGlobals();
     
     public abstract MatchResult evaluate(String subject, int pos);
     
@@ -94,143 +97,131 @@ public abstract class PatternElem {
         return subString;
     }
     
-    public List<PatternElem> defineFuncArguments(String args){
+    public List<PatternElem> defineFuncArguments(String args) throws PatternException{
         PatternElem nullElem = new PatternElemNull();
         List<PatternElem> funcArgs = new ArrayList();
+        PatternElem pat = new PatternElemNull();
+        int stop, endLet;
+        String argument;
         int braceL, braceR;
+        int strL, strR;
+        int operator;
         PatternLabel patternLabel;
-        
-        StringTokenizer stringTokenizer = new StringTokenizer(args);
-        while (stringTokenizer.hasMoreTokens()) {
-            // need to handle (exp exp) make recursive
-            
-            String argumentName = "";
-            String internalArgument = "";
-            
-            String token = stringTokenizer.nextToken();
-            braceL = token.indexOf("(");
-            if (braceL != -1) {//is a fuction
-                PatternElem pat = nullElem;
-                argumentName = token.substring(0, braceL);
-                //check for user defined function
-                patternLabel = PatternLabel.valueOf(argumentName);
-                braceR = token.lastIndexOf(")");
-                if(braceR != -1) internalArgument = token.substring((braceL + 1), braceR);
-                //need to check for existing user defined fuctions too
-                else System.out.println("Pattern Fucntion needs a \")\"");
-                if(argumentName.isEmpty()) {
-                    pat = new PatternElemPattern(internalArgument);
+        int comma = args.length();
+        int pos = 0;
+        while(args.charAt(pos) == ' ' && pos < args.length()) pos++;
+        while(comma >= 0){
+            comma = args.indexOf(",", pos);
+            if(comma > 0) {
+                stop = comma;
+            } else {
+                stop = args.length();
+            }
+            System.out.println(args + ", " + pos + ", " + stop);
+            argument = args.substring(pos, stop);
+            braceL = args.indexOf("(", pos);
+            if(braceL < stop && braceL >= 0) {
+                braceR = findClosingSymbol(args, "(", pos);
+            }
+            operator = findOperator(args);
+            if(args.charAt(pos) == '\'') {
+                strL = pos;
+                strR = findClosingSymbol(args, "'", pos);
+                if(strR > 0) {
+                    pat = new PatternTypeString(args.substring(strL + 1, strR));
                 } else {
-                    switch(patternLabel){
-                        //will copy all the cases later...
-                        case Abort :
-                        pat = new PatternStructureAbort(internalArgument);
-                        break;
-                    case Any :
-                        pat = new PatternFunctionAny(internalArgument);
-                        break;
-                    /*case Arb :
-                        pat = new PatternStructureArb(definition, internalArgument);
-                        break;
-                    case Arbno :
-                        pat = new PatternStructureArbno(definition, internalArgument);
-                        break;*/
-                    case Break :
-                        pat = new PatternFunctionBreak(internalArgument);
-                        break;
-                    case Fail :
-                        pat = new PatternFunctionFail(internalArgument);
-                        break;
-                    case Len :
-                        pat = new PatternFunctionLen(internalArgument);
-                        break;
-                    case NotAny :
-                        pat = new PatternFunctionNotAny(internalArgument);
-                        break;
-                    case Rem :
-                        pat = new PatternFunctionRem(internalArgument);
-                        break;
-                    case RTab :
-                        pat = new PatternFunctionRTab(internalArgument);
-                        break;
-                    case Span :
-                        pat = new PatternFunctionSpan(internalArgument);
-                        break;
-                    case Success :
-                        pat = new PatternFunctionSucceed(internalArgument);
-                        break;
-                    case Tab :
-                        pat = new PatternFunctionTab(internalArgument);
-                        break;
-                    default :
-                        System.out.println("Unknown Pattern Element.");
-                        break;
-                    }
+                    throw new PatternException("Pattern String needs a closing \"'\"");
                 }
-                funcArgs.add(pat);
-            } else { // not a function
-                argumentName = token;
-
-                if(isInteger(argumentName)) { //integer argument
-                    PatternElem integerArgument = new PatternTypeInteger(argumentName);
-                    funcArgs.add(integerArgument);
-                } else if(argumentName.startsWith("'")) { //string argument
-                    if(argumentName.endsWith("'")){
-                        String st = token.substring(1, (token.length() - 1));
-                        PatternElem stringArgument = new PatternTypeString(st);
-                        funcArgs.add(stringArgument);
+            } else if(args.charAt(pos) == '('){
+                System.out.println("Sub Pattern");
+                braceR = findClosingSymbol(args, "(", braceL);
+                if(braceR > 0) {
+                    String subArgs = args.substring(braceL + 1, braceR);
+                    pat = new PatternElemPattern(subArgs);
+                    pos = braceR + 1;
+                } else {
+                    throw new PatternException("Pattern bracket needs a closing \")\"");
+                }
+            } else if(operator < comma) {
+                pat = new PatternElemPattern(args);
+            } else if(memberOfCSet(args.charAt(pos), csets.letters)) {
+                if(braceL > pos) {
+                    argument = args.substring(pos, braceL);
+                    braceR = findClosingSymbol(args, "(", braceL);
+                    if(braceR > pos) {
+                        pat = makePatternFunction(argument, args, braceL, braceR);
+                        if(pat.getClass().equals(PatternElemNull.class)) {
+                            throw new PatternException("Unrecognized Pattern Function");
+                        } 
                     } else {
-                        System.out.println("String Pattern Type must end with \"'\"");
+                        throw new PatternException("Pattern bracket needs a closing \")\"");
                     }
-                } else if(argumentName.startsWith("`")) { //C-Set argument
-                    if(argumentName.endsWith("`")){
-                        String st = token.substring(1, (token.length() - 1));
-                        PatternElem csetArgument = new PatternTypeCSet(st);
-                        funcArgs.add(csetArgument);
-                    } else {
-                        System.out.println("String Pattern Type must end with \"'\"");
-                    }
-                } else {//existing patterns or operators
-                    funcArgs.add(nullElem);
+                } else {
+                    System.out.println("Variable");
+                    endLet = endLetters(args, pos);
+                    argument = args.substring(pos, endLet);
+                    pat = new PatternElemVariable(argument);
                 }
             }
+            pos = stop;
+            funcArgs.add(pat);
         }
+        
         return funcArgs;
     }
     
-    private boolean isInteger(String st){
-            if(st.matches("[0-9]")){
-                return true;
-            } else {
-                return false;
-            }
-    }
-    
-    public int beginCSet(String subject, int pos, String cset){
-        for(int i = 0; i < cset.length(); i++) {
-            if(subject.charAt(pos) == cset.charAt(i)) return pos;
-        }
-        pos++;
-        return -1;
-    }
-    
-    public boolean atCSet(String subject, int pos, String cset){
-        for(int i = pos; i < cset.length(); i++) {
-            if(subject.charAt(pos) == cset.charAt(i)) return true;
-        }
-        return false;
-    }
-    
-    public int endCSet(String subject, int pos, String cset){
-        int p = pos;
-        while(p < subject.length()) {
-            boolean success = false;
-            for(int i = 0; i < cset.length(); i++) {
-                if(subject.charAt(p) == cset.charAt(i)) success = true;
-            }
-            if(!success)return p;
-            p++;
-        }
-        return subject.length() + 1;
+    private PatternElem makePatternFunction(String token, String pattern, int braceL, int braceR) 
+            throws PatternException{
+        
+        PatternElem pat;
+        PatternLabel patternLabel;
+        String args;
+        
+        patternLabel = PatternLabel.valueOf(token);
+        args = pattern.substring(braceL + 1, braceR);
+        switch(patternLabel){
+            case Abort :
+                pat = new PatternStructureAbort(args);
+                break;
+            case Any :
+                pat = new PatternFunctionAny(args);
+                break;
+            /*case Arb :
+                pat = new PatternStructureArb(definition, args);
+                break;
+            case Arbno :
+                pat = new PatternStructureArbno(definition, args);
+                break;*/
+            case Break :
+                pat = new PatternFunctionBreak(args);
+                break;
+            case Fail :
+                pat = new PatternFunctionFail(args);
+                break;
+            case Len :
+                pat = new PatternFunctionLen(args);
+                break;
+            case NotAny :
+                pat = new PatternFunctionNotAny(args);
+                break;
+            case Rem :
+                pat = new PatternFunctionRem(args);
+                break;
+            case RTab :
+                pat = new PatternFunctionRTab(args);
+                break;
+            case Span :
+                pat = new PatternFunctionSpan(args);
+                break;
+            case Success :
+                pat = new PatternFunctionSucceed(args);
+                break;
+            case Tab :
+                pat = new PatternFunctionTab(args);
+                break;
+            default :
+                pat = new PatternElemNull();
+        } 
+        return pat;
     }
 }
