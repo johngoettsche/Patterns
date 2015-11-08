@@ -5,5 +5,8 @@
         <group name="MyJava">
             <file>file:/C:/MyJava/Patterns/src/patterns/testing.java</file>
         </group>
+        <group>
+            <file>file:/C:/Users/John/Documents/NetBeansProjects/StringAnalysis/src/stringAnalysis/PatternDefinitionIterator.java</file>
+        </group>
     </open-files>
 </project-private>
